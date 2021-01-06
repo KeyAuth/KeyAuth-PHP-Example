@@ -3,7 +3,7 @@
 require 'keyauth.php';
 
 /*
-WATCH VIDEO TO SETUP: 
+WATCH VIDEO TO SETUP: https://youtube.com/watch?v=NCZkg_O92sA
 */
 
 if (isset($_SESSION['user_data'])) {
