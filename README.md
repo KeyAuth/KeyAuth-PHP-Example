@@ -3,7 +3,7 @@ PHP Example For KeyAuth Authentication System
 
 Set Application Name And OwnerID in index.php and you're set.
 
-Video Tutorial:
+Video Tutorial: https://youtube.com/watch?v=NCZkg_O92sA
 
 **What is KeyAuth?**
 
