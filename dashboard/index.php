@@ -1,25 +1,35 @@
 <?php
 
-if(!isset($_SESSION))
-    session_start();
+session_start();
 
-date_default_timezone_set('America/New_York'); // change this to whatever time zone you want expiry to display in
-
-if (!isset($_SESSION['user_data'])) {
+if (!isset($_SESSION['user_data'])) // if user not logged in
+{
         header("Location: ../");
         exit();
 }
 
-$key = $_SESSION["user_data"]["key"];
-$expiry = $_SESSION["user_data"]["expiry"];
+$username = $_SESSION["user_data"]["username"];
+$subscription = $_SESSION["user_data"]["subscriptions"][0]->subscription;
+$expiry = $_SESSION["user_data"]["subscriptions"][0]->expiry;
+
+if(isset($_POST['logout']))
+{
+	session_destroy();
+	header("Location: ../");
+    exit();
+}
 ?>
 <html>
 <head>
 <title>Dashboard</title>
+<script src="https://keyauth.com/dashboard/files/unixtolocal.js"></script>
 </head>
 <body>
-Logged in as <?php echo $key; ?>
+<form method="post"><button name="logout">Logout</button></form>
+Logged in as <?php echo $username; ?>
 <br>
-Your Key Expires At <?php echo date('jS F Y h:i:s A (T)', $expiry); ?>
+Your Subscription:<?php echo $subscription; ?>
+<br>
+Your Subscription Expires: <script>document.write(convertTimestamp(<?php echo $expiry; ?>));</script>
 </body>
 </html>

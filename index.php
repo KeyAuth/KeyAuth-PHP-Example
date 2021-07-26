@@ -6,15 +6,20 @@ require 'keyauth.php';
 WATCH VIDEO TO SETUP: https://youtube.com/watch?v=NCZkg_O92sA
 */
 
-if (isset($_SESSION['user_data'])) {
+if (isset($_SESSION['user_data'])) 
+{
 	header("Location: dashboard/");
     exit();
 }
 
-$name = "";
-$ownerid = "";
+$name = ""; // your application name
+$ownerid = ""; // your KeyAuth account's ownerid, located in account settings 
 $KeyAuthApp = new KeyAuth\api($name, $ownerid);
 
+if (!isset($_SESSION['sessionid'])) 
+{
+	$KeyAuthApp->init();
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -41,18 +46,45 @@ $KeyAuthApp = new KeyAuth\api($name, $ownerid);
 			<div class="wrap-login100 p-t-50 p-b-90">
 				<form class="login100-form validate-form flex-sb flex-w" method="post">
 					<span class="login100-form-title p-b-51">
-						Login
+						KeyAuth PHP Example
 					</span>
 
+					<div class="wrap-input100 validate-input m-b-16" data-validate = "Username is required">
+						<input class="input100" type="text" name="username" placeholder="Username">
+						<span class="focus-input100"></span>
+					</div>
+					
+					<div class="wrap-input100 validate-input m-b-16" data-validate = "Password is required">
+						<input class="input100" type="password" name="password" placeholder="Password">
+						<span class="focus-input100"></span>
+					</div>
 					
 					<div class="wrap-input100 validate-input m-b-16" data-validate = "Key is required">
-						<input class="input100" type="text" name="key" required placeholder="Key">
+						<input class="input100" type="text" name="key" placeholder="Key">
 						<span class="focus-input100"></span>
 					</div>
 
 					<div class="container-login100-form-btn m-t-17">
 						<button name="login" class="login100-form-btn">
 							Login
+						</button>
+					</div>
+					
+					<div class="container-login100-form-btn m-t-17">
+						<button name="register" class="login100-form-btn">
+							Register
+						</button>
+					</div>
+					
+					<div class="container-login100-form-btn m-t-17">
+						<button name="license" class="login100-form-btn">
+							License
+						</button>
+					</div>
+					
+					<div class="container-login100-form-btn m-t-17">
+						<button name="upgrade" class="login100-form-btn">
+							Upgrade
 						</button>
 					</div>
 
@@ -66,8 +98,8 @@ $KeyAuthApp = new KeyAuth\api($name, $ownerid);
     <?php
         if (isset($_POST['login']))
         {
-		
-		if($KeyAuthApp->login($_POST['key']))
+		// login with username and password
+		if($KeyAuthApp->login($_POST['username'],$_POST['password']))
 		{
 			echo "<meta http-equiv='Refresh' Content='2; url=dashboard/'>";
 			                            echo '
@@ -84,7 +116,72 @@ $KeyAuthApp = new KeyAuth\api($name, $ownerid);
                             </script>
                             ';     
 		}
-
+		}
+		
+		if (isset($_POST['register']))
+        {
+		// register with username,password,key
+		if($KeyAuthApp->register($_POST['username'],$_POST['password'],$_POST['key']))
+		{
+			echo "<meta http-equiv='Refresh' Content='2; url=dashboard/'>";
+			                            echo '
+                            <script type=\'text/javascript\'>
+                            
+                            const notyf = new Notyf();
+                            notyf
+                              .success({
+                                message: \'You have successfully logged in!\',
+                                duration: 3500,
+                                dismissible: true
+                              });                
+                            
+                            </script>
+                            ';     
+		}
+		}
+		
+		if (isset($_POST['license']))
+        {
+		// login with just key
+		if($KeyAuthApp->license($_POST['key']))
+		{
+			echo "<meta http-equiv='Refresh' Content='2; url=dashboard/'>";
+			                            echo '
+                            <script type=\'text/javascript\'>
+                            
+                            const notyf = new Notyf();
+                            notyf
+                              .success({
+                                message: \'You have successfully logged in!\',
+                                duration: 3500,
+                                dismissible: true
+                              });                
+                            
+                            </script>
+                            ';     
+		}
+		}
+		
+		if (isset($_POST['upgrade']))
+        {
+		// login with just key
+		if($KeyAuthApp->upgrade($_POST['username'],$_POST['key']))
+		{
+							// don't login, upgrade function is not for authentication, it's simply for redeeming keys
+			                            echo '
+                            <script type=\'text/javascript\'>
+                            
+                            const notyf = new Notyf();
+                            notyf
+                              .success({
+                                message: \'Upgraded Successful!\',
+                                duration: 3500,
+                                dismissible: true
+                              });                
+                            
+                            </script>
+                            ';     
+		}
 		}
     ?>
 	<div id="dropDownSelect1"></div>
