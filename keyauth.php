@@ -97,7 +97,7 @@ class api {
 	
 	function upgrade($username,$key){
         $data = array(
-            "type" => "license",
+            "type" => "upgrade",
             "username" => $username,
             "key" => $key,
             "sessionid" => $_SESSION['sessionid'],
@@ -158,8 +158,6 @@ class api {
 
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-        curl_setopt($curl, CURLOPT_PINNEDPUBLICKEY, "sha256//zaXl1uxtEA6FAR8KKoew4FYX+X3Khlfd/zjVD+SdMpc=");
-		curl_setopt($curl, CURLOPT_DNS_SERVERS, "1.1.1.1,1.0.0.1");
 
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 

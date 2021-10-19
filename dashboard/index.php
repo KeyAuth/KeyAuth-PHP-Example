@@ -22,7 +22,7 @@ if(isset($_POST['logout']))
 <html>
 <head>
 <title>Dashboard</title>
-<script src="https://keyauth.com/dashboard/files/unixtolocal.js"></script>
+<script src="https://cdn.keyauth.com/dashboard/unixtolocal.js"></script>
 </head>
 <body>
 <form method="post"><button name="logout">Logout</button></form>
