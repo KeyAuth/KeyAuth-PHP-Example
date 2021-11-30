@@ -1,0 +1,316 @@
+
+* {
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "segoe ui", roboto, oxygen, ubuntu, cantarell, "fira sans", "droid sans", "helvetica neue", Arial, sans-serif;
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  position: relative;
+  min-height: 100%;
+  color: #555555;
+  background-color: #ebebec;
+  margin: 0;
+}
+
+h1, h2, h3, h4, h5 {
+  color: #394352;
+  margin: 0;
+  padding: 0;
+}
+
+header {
+  display: flex;
+  position: fixed;
+  top: 0;
+  z-index: 999;
+  width: 100%;
+  height: 55px;
+  background-color: #36393e;
+  padding: 0 15px;
+}
+
+header h1 {
+  display: inline-flex;
+  flex-basis: 100%;
+  height: 100%;
+  color: #ffffff;
+  padding: 0;
+  margin: 0;
+  font-weight: 600;
+  font-size: 16px;
+  align-items: center;
+}
+
+header a {
+  display: inline-flex;
+  color: #ffffff;
+  height: 100%;
+  text-decoration: none;
+  justify-content: center;
+  align-items: center;
+}
+
+header a i {
+  font-size: 30px;
+}
+
+header a:hover, header a:active {
+  color: #bbbbbb;
+}
+
+header .responsive-toggle {
+  display: none;
+}
+
+aside {
+  position: fixed;
+  z-index: 999999;
+  height: 100%;
+  width: 250px;
+  display: flex;
+  flex-flow: column;
+  background-color: #232528;
+  margin-top: 55px;
+}
+
+aside a {
+  font-size: 16px;
+  font-weight: 600;
+  text-decoration: none;
+  color: #d7d7d8;
+  padding: 15px 15px;
+  border-bottom: 1px solid #1a1b1d;
+}
+
+aside a i {
+  padding-right: 15px;
+}
+
+aside a:hover {
+  background-color: #1a1b1d;
+}
+
+main {
+  padding: 30px;
+  padding-left: 280px;
+  padding-top: 85px;
+}
+
+main h2 {
+  font-size: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #dbdbdd;
+}
+
+main .content-block {
+  background-color: #fff;
+  margin-top: 25px;
+  padding: 15px;
+}
+
+main .table {
+  padding: 0 10px;
+}
+
+main .table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+main .table table thead td {
+  font-weight: 600;
+  padding: 15px 0;
+}
+
+main .table table thead tr {
+  border-bottom: 1px solid #f0f0f1;
+}
+
+main .table table tbody td {
+  padding: 5px 0;
+}
+
+main .table table tbody .img {
+  width: 50px;
+}
+
+main .table table .details {
+  cursor: pointer;
+}
+
+main .table table .details:hover {
+  background-color: #dbdbdd;
+}
+
+main .table table .expanded-details {
+  display: none;
+  background-color: #fdfdfd;
+}
+
+main .table table .expanded-details td {
+  padding: 15px;
+}
+
+main .table table .expanded-details td > div {
+  display: flex;
+  flex-flow: wrap;
+}
+
+main .table table .expanded-details td > div div {
+  width: 33.3%;
+}
+
+main .table table .expanded-details td > div div span {
+  display: flex;
+  padding: 5px 0;
+}
+
+main .table table .expanded-details td > div div span:first-child {
+  font-weight: 600;
+  padding-top: 10px;
+}
+
+main .form {
+  display: flex;
+  flex-flow: column;
+  width: 500px;
+  padding: 20px;
+}
+
+main .form input, main .form textarea, main .form select {
+  width: 100%;
+  padding: 15px 5px;
+  margin-bottom: 25px;
+  border: 0;
+  border-bottom: 1px solid #dedee0;
+}
+
+main .form input:hover, main .form input:active, main .form textarea:hover, main .form textarea:active, main .form select:hover, main .form select:active {
+  border-bottom: 1px solid #b7b7ba;
+}
+
+main .form textarea {
+  height: 200px;
+}
+
+main .form input[type="submit"] {
+  background: #4e5c70;
+  border: 0;
+  color: #FFFFFF;
+  width: 50%;
+  padding: 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+main .form input[type="submit"]:hover {
+  background: #434f61;
+}
+
+main .form input[type="checkbox"] {
+  width: auto;
+  margin: 15px 0 25px 2px;
+  transform: scale(1.2);
+}
+
+main .form label {
+  display: block;
+  font-weight: 600;
+}
+
+main .form select {
+  margin-bottom: 0;
+}
+
+main .form button {
+  background-color: #dedee0;
+  color: #69696f;
+  border: 0;
+  padding: 5px;
+  width: 100%;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+main .form button:hover {
+  background-color: #d6d6d8;
+}
+
+main .form div {
+  margin-bottom: 25px;
+}
+
+main .form .submit-btns {
+  display: flex;
+}
+
+main .form .submit-btns input:first-child {
+  margin-right: 15px;
+}
+
+main .form .submit-btns .delete {
+  background-color: #b22b2b;
+}
+
+main .form .submit-btns .delete:hover {
+  background-color: #9d2626;
+}
+
+main .links {
+  display: flex;
+  flex-flow: wrap;
+  padding-top: 20px;
+}
+
+main .links a {
+  display: inline-flex;
+  text-decoration: none;
+  background: #4e5c70;
+  color: #FFFFFF;
+  padding: 12px 15px;
+  margin-right: 10px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+main .links a:hover {
+  background: #434f61;
+}
+
+main .error {
+  padding: 15px;
+  margin: 0;
+}
+
+@media screen and (max-width: 1000px) {
+  header .responsive-toggle {
+    display: flex;
+  }
+  .responsive-hidden {
+    display: none;
+  }
+  .responsive-width-100 {
+    width: 100% !important;
+  }
+  .responsive-flex-column {
+    flex-flow: column;
+  }
+  main {
+    padding: 70px 7px 20px 7px;
+  }
+  main .expanded-details div {
+    width: 100% !important;
+  }
+  main .content-block {
+    padding: 5px;
+  }
+}
