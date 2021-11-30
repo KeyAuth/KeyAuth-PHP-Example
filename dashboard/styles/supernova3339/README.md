@@ -8,6 +8,3 @@
 # Functions
 
 `?logout` - Destroys User's Session
-
-> Thanks for using this template! 
-
