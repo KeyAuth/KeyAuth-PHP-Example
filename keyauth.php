@@ -152,7 +152,7 @@ class api {
     }
 
     private function req($data){
-        $curl = curl_init("https://keyauth.com/api/1.1/");
+        $curl = curl_init("https://keyauth.win/api/1.1/");
         curl_setopt($curl, CURLOPT_USERAGENT, "KeyAuth");
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
