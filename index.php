@@ -27,10 +27,10 @@ if (!isset($_SESSION['sessionid']))
 	<title>Login</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="shortcut icon" href="https://cdn.keyauth.com/assets/img/favicon.png" type="image/x-icon">
+    <link rel="shortcut icon" href="https://cdn.keyauth.win/assets/img/favicon.png" type="image/x-icon">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
-	<link rel="stylesheet" type="text/css" href="https://cdn.keyauth.com/auth/css/util.css">
-	<link rel="stylesheet" type="text/css" href="https://cdn.keyauth.com/auth/css/main.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.keyauth.win/auth/css/util.css">
+	<link rel="stylesheet" type="text/css" href="https://cdn.keyauth.win/auth/css/main.css">
 </head>
 <body>
 	<div class="limiter">
@@ -122,7 +122,7 @@ if (!isset($_SESSION['sessionid']))
                             const notyf = new Notyf();
                             notyf
                               .success({
-                                message: \'You have successfully logged in!\',
+                                message: \'You have successfully registered!\',
                                 duration: 3500,
                                 dismissible: true
                               });                
@@ -166,7 +166,7 @@ if (!isset($_SESSION['sessionid']))
                             const notyf = new Notyf();
                             notyf
                               .success({
-                                message: \'Upgraded Successful!\',
+                                message: \'Upgraded Successfully! Now login please.\',
                                 duration: 3500,
                                 dismissible: true
                               });                
