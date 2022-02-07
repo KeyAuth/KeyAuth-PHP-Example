@@ -111,8 +111,8 @@ class api {
 
         if(!$json->success)
             $this->error($json->message);
-        else if($json->success)
-            $_SESSION["user_data"] = (array)$json->info;
+        
+		// don't allow them to dashboard yet, upgrade doesn't require password so they need to login after register
 
         return $json->success;
     }
