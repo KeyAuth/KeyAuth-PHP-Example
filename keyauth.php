@@ -44,7 +44,10 @@ class api {
         $json = json_decode($response);
 
         if(!$json->success)
+		{
+			unset($_SESSION['sessionid']);
             $this->error($json->message);
+		}
         else if($json->success)
             $_SESSION["user_data"] = (array)$json->info;
 
@@ -67,7 +70,10 @@ class api {
         $json = json_decode($response);
 
         if(!$json->success)
+		{
+			unset($_SESSION['sessionid']);
             $this->error($json->message);
+		}
         else if($json->success)
             $_SESSION["user_data"] = (array)$json->info;
 
@@ -88,7 +94,10 @@ class api {
         $json = json_decode($response);
 
         if(!$json->success)
+		{
+			unset($_SESSION['sessionid']);
             $this->error($json->message);
+		}
         else if($json->success)
             $_SESSION["user_data"] = (array)$json->info;
 
@@ -110,7 +119,10 @@ class api {
         $json = json_decode($response);
 
         if(!$json->success)
+		{
+			unset($_SESSION['sessionid']);
             $this->error($json->message);
+		}
         
 		// don't allow them to dashboard yet, upgrade doesn't require password so they need to login after register
 
@@ -131,7 +143,10 @@ class api {
         $json = json_decode($response);
 
         if(!$json->success)
+		{
+			unset($_SESSION['sessionid']);
             $this->error($json->message);
+		}
         else if($json->success)
             return $json->message;
     }
