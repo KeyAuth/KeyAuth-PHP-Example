@@ -23,6 +23,12 @@ class api {
 
         $json = json_decode($response);
 
+	if($json->message == "This program hash does not match, make sure you're using latest version")
+        {
+            $message = "This Application have hash check enabled, Please Disable it so you can access this.";
+            die($message); // Dies + Prints Error Message.
+        }
+		
         if(!$json->success)
             $this->error($json->message);
         else if($json->success)
@@ -171,6 +177,7 @@ class api {
         curl_setopt($curl, CURLOPT_USERAGENT, "KeyAuth");
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
+	curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 
