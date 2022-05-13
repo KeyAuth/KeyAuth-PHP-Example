@@ -5,7 +5,7 @@ Set Application Name And OwnerID in index.php and you're set.
 
 Video Tutorial: https://youtube.com/watch?v=NCZkg_O92sA
 
-## Security 
+## Anti-DDoS Security 
 
 Please add a Cloudflare firewall rule to show challenge to users, then set challenge passage to 1 year so they don't have to frequently complete challenge
 ![image](https://user-images.githubusercontent.com/83034852/168191187-236e8be7-1b1c-4398-9360-462baa800fac.png)
