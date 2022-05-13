@@ -102,7 +102,6 @@ class api {
         if(!$json->success)
 		{
 			unset($_SESSION['sessionid']);
-			echo $json->message;
             $this->error($json->message);
 		}
         else if($json->success)
