@@ -5,6 +5,13 @@ Set Application Name And OwnerID in index.php and you're set.
 
 Video Tutorial: https://youtube.com/watch?v=NCZkg_O92sA
 
+## Security 
+
+Please add a Cloudflare firewall rule to show challenge to users, then set challenge passage to 1 year so they don't have to frequently complete challenge
+![image](https://user-images.githubusercontent.com/83034852/168191187-236e8be7-1b1c-4398-9360-462baa800fac.png)
+![image](https://user-images.githubusercontent.com/83034852/168191204-d553f134-943b-466e-a98f-255fbab204c6.png)
+
+
 **What is KeyAuth?**
 
 KeyAuth is an Open source authentication system with cloud hosting plans as well. Client SDKs available for C++, C#, Python, Rust, PHP, and VB.NET.
