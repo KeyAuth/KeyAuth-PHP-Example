@@ -102,6 +102,7 @@ class api {
         if(!$json->success)
 		{
 			unset($_SESSION['sessionid']);
+			echo $json->message;
             $this->error($json->message);
 		}
         else if($json->success)
@@ -197,7 +198,7 @@ class api {
                 const notyf = new Notyf();
                 notyf
                   .error({
-                    message: \''.$msg.'\',
+                    message: \''.addslashes($msg).'\',
                     duration: 3500,
                     dismissible: true
                   });                
