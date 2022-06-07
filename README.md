@@ -1,9 +1,12 @@
 # KeyAuth-PHP-Example
 PHP Example For KeyAuth Authentication System
 
-Set Application Name And OwnerID in index.php and you're set.
+Set Application Name, OwnerID and Version in credentials.php and you're set.
 
-Video Tutorial: https://youtube.com/watch?v=NCZkg_O92sA
+Video Tutorial:
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=hU6yXGR5R1Y
+" target="_blank"><img src="https://i.imgur.com/Cd6DbXD.png" 
+alt="Click here to see Installation Video!" width="500" height="250" border="10" /></a>
 
 ## Anti-DDoS Security 
 
@@ -14,6 +17,6 @@ Please add a Cloudflare firewall rule to show challenge to users, then set chall
 
 **What is KeyAuth?**
 
-KeyAuth is an Open source authentication system with cloud hosting plans as well. Client SDKs available for C++, C#, Python, Rust, PHP, and VB.NET.
+KeyAuth is an Open source authentication system with cloud hosting plans as well. Client SDKs available for C++, C#, Python, Rust, PHP, JS and VB.NET.
 KeyAuth several unique features such as memory streaming, webhook function where you can send requests to API without leaking the API, discord webhook notifications, ban the user securely through the application at your discretion.
 Feel free to join https://keyauth.win/discord/ if you have questions or suggestions.

@@ -4,15 +4,25 @@ namespace KeyAuth;
 
 session_start();
 
-class api {
-    public $name, $ownerid;
+class api
+{
+    public $name, $ownerid, $version;
 
-    function __construct($name, $ownerid) {
+    public $numUsers, $numKeys, $numOnlineUsers, $customerPanelLink;
+
+    function __construct($name, $ownerid, $version)
+    {
         $this->name = $name;
         $this->ownerid = $ownerid;
+        $this->version = $version;
     }
-	
-	function init(){
+
+    function init()
+    {
+        if ($this->name == "" || $this->ownerid == "" || $this->version == "") {
+            die("Please set your application name, ownerid and version in credentials.php");
+        }
+
         $data = array(
             "type" => "init",
             "name" => $this->name,
@@ -21,21 +31,30 @@ class api {
 
         $response = $this->req($data);
 
+        if ($response == "KeyAuth_Invalid") {
+            die("Application not found");
+        }
+
         $json = json_decode($response);
 
-	if($json->message == "This program hash does not match, make sure you're using latest version")
-        {
+        if ($json->message == "This program hash does not match, make sure you're using latest version") {
             $message = "This Application have hash check enabled, Please Disable it so you can access this.";
             die($message); // Dies + Prints Error Message.
         }
-		
-        if(!$json->success)
+
+        if (!$json->success)
             $this->error($json->message);
-        else if($json->success)
+        else if ($json->success) {
             $_SESSION['sessionid'] = $json->sessionid;
+            $this->numUsers = $json->appinfo->numUsers;
+            $this->numKeys = $json->appinfo->numKeys;
+            $this->numOnlineUsers = $json->appinfo->numOnlineUsers;
+            $this->customerPanelLink = $json->appinfo->customerPanelLink;
+        }
     }
 
-    function login($username,$password){
+    function login($username, $password)
+    {
         $data = array(
             "type" => "login",
             "username" => $username,
@@ -49,18 +68,17 @@ class api {
 
         $json = json_decode($response);
 
-        if(!$json->success)
-		{
-			unset($_SESSION['sessionid']);
+        if (!$json->success) {
+            unset($_SESSION['sessionid']);
             $this->error($json->message);
-		}
-        else if($json->success)
+        } else if ($json->success)
             $_SESSION["user_data"] = (array)$json->info;
 
         return $json->success;
     }
-	
-	function register($username,$password,$key){
+
+    function register($username, $password, $key)
+    {
         $data = array(
             "type" => "register",
             "username" => $username,
@@ -75,18 +93,17 @@ class api {
 
         $json = json_decode($response);
 
-        if(!$json->success)
-		{
-			unset($_SESSION['sessionid']);
+        if (!$json->success) {
+            unset($_SESSION['sessionid']);
             $this->error($json->message);
-		}
-        else if($json->success)
+        } else if ($json->success)
             $_SESSION["user_data"] = (array)$json->info;
 
         return $json->success;
     }
-	
-	function license($key){
+
+    function license($key)
+    {
         $data = array(
             "type" => "license",
             "key" => $key,
@@ -99,18 +116,17 @@ class api {
 
         $json = json_decode($response);
 
-        if(!$json->success)
-		{
-			unset($_SESSION['sessionid']);
+        if (!$json->success) {
+            unset($_SESSION['sessionid']);
             $this->error($json->message);
-		}
-        else if($json->success)
+        } else if ($json->success)
             $_SESSION["user_data"] = (array)$json->info;
 
         return $json->success;
     }
-	
-	function upgrade($username,$key){
+
+    function upgrade($username, $key)
+    {
         $data = array(
             "type" => "upgrade",
             "username" => $username,
@@ -124,18 +140,18 @@ class api {
 
         $json = json_decode($response);
 
-        if(!$json->success)
-		{
-			unset($_SESSION['sessionid']);
+        if (!$json->success) {
+            unset($_SESSION['sessionid']);
             $this->error($json->message);
-		}
-        
-		// don't allow them to dashboard yet, upgrade doesn't require password so they need to login after register
+        }
+
+        // don't allow them to dashboard yet, upgrade doesn't require password so they need to login after register
 
         return $json->success;
     }
-	
-	function var($varid){
+
+    function var($varid)
+    {
         $data = array(
             "type" => "var",
             "varid" => $varid,
@@ -148,23 +164,22 @@ class api {
 
         $json = json_decode($response);
 
-        if(!$json->success)
-		{
-			unset($_SESSION['sessionid']);
+        if (!$json->success) {
+            unset($_SESSION['sessionid']);
             $this->error($json->message);
-		}
-        else if($json->success)
+        } else if ($json->success)
             return $json->message;
     }
 
-    function log($message){
-        $logkey = $_SESSION["user_data"]["key"] ?? "NONE";
+    function log($message)
+    {
+        $User = gethostname();
 
         $data = array(
             "type" => "log",
-            "pcuser" => "Server",
+            "pcuser" => $User,
             "message" => $message,
-			"sessionid" => $_SESSION['sessionid'],
+            "sessionid" => $_SESSION['sessionid'],
             "name" => $this->name,
             "ownerid" => $this->ownerid
         );
@@ -172,12 +187,70 @@ class api {
         $this->req($data);
     }
 
-    private function req($data){
+    function setvar($varname, $data)
+    {
+        $data = array(
+            "type" => "setvar",
+            "var" => $varname,
+            "data" => $data,
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid
+        );
+
+        $this->req($data);
+    }
+
+    function getvar($varid)
+    {
+        $data = array(
+            "type" => "getvar",
+            "var" => $varid,
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid
+        );
+
+        $response = $this->req($data);
+
+        $json = json_decode($response);
+
+        if (!$json->success) {
+            return null;
+        } else if ($json->success)
+            return $json->response;
+    }
+
+    function webhook($webid, $param, $body = "", $conttype = "")
+    {
+        $data = array(
+            "type" => "webhook",
+            "webid" => $webid,
+            "params" => $param,
+            "body" => $body,
+            "conttype" => $conttype,
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid
+        );
+
+        $response = $this->req($data);
+
+        $json = json_decode($response);
+
+        if (!$json->success) {
+            return null;
+        } else if ($json->success)
+            return $json->response;
+    }
+
+    private function req($data)
+    {
         $curl = curl_init("https://keyauth.win/api/1.1/");
         curl_setopt($curl, CURLOPT_USERAGENT, "KeyAuth");
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-	curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
         curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
 
@@ -190,19 +263,22 @@ class api {
         return $response;
     }
 
-    public function error($msg){
-                        echo '
+    public function error($msg)
+    {
+        echo '
                 <script type=\'text/javascript\'>
                 
                 const notyf = new Notyf();
                 notyf
                   .error({
-                    message: \''.addslashes($msg).'\',
+                    message: \'' . addslashes($msg) . '\',
                     duration: 3500,
                     dismissible: true
                   });                
                 
                 </script>
-                ';  
+                ';
     }
 }
+
+?>

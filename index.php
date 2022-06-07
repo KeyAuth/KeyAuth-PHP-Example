@@ -1,26 +1,25 @@
 <?php
-	
 require 'keyauth.php';
+require 'credentials.php';
 
-/*
-WATCH VIDEO TO SETUP: https://youtube.com/watch?v=NCZkg_O92sA
-*/
-
-if (isset($_SESSION['user_data'])) 
-{
+if (isset($_SESSION['user_data'])) {
 	header("Location: dashboard/");
-    exit();
+	exit();
 }
 
-$name = ""; // your application name
-$ownerid = ""; // your KeyAuth account's ownerid, located in account settings 
-$KeyAuthApp = new KeyAuth\api($name, $ownerid);
+$KeyAuthApp = new KeyAuth\api($name, $ownerid, $version);
 
-if (!isset($_SESSION['sessionid'])) 
-{
+if (!isset($_SESSION['sessionid'])) {
 	$KeyAuthApp->init();
 }
+
+$numKeys = $KeyAuthApp->numKeys;
+$numUsers = $KeyAuthApp->numUsers;
+$numOnlineUsers = $KeyAuthApp->numOnlineUsers;
+$customerPanelLink = $KeyAuthApp->customerPanelLink;
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
