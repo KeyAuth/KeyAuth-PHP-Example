@@ -4,6 +4,7 @@ PHP Example For KeyAuth Authentication System
 Set Application Name, OwnerID and Version in credentials.php and you're set.
 
 Video Tutorial:
+
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=hU6yXGR5R1Y
 " target="_blank"><img src="https://i.imgur.com/Cd6DbXD.png" 
 alt="Click here to see Installation Video!" width="500" height="250" border="10" /></a>
