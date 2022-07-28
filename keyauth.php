@@ -6,21 +6,20 @@ session_start();
 
 class api
 {
-    public $name, $ownerid, $version;
+    public $name, $ownerid;
 
     public $numUsers, $numKeys, $numOnlineUsers, $customerPanelLink;
 
-    function __construct($name, $ownerid, $version)
+    function __construct($name, $ownerid)
     {
         $this->name = $name;
         $this->ownerid = $ownerid;
-        $this->version = $version;
     }
 
     function init()
     {
-        if ($this->name == "" || $this->ownerid == "" || $this->version == "") {
-            die("Please set your application name, ownerid and version in credentials.php");
+        if ($this->name == "" || $this->ownerid == "") {
+            die("Please set your application name and ownerid in credentials.php");
         }
 
         $data = array(
