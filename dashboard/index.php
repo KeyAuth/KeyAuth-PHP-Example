@@ -12,7 +12,7 @@ if (!isset($_SESSION['user_data'])) // if user not logged in
 	exit();
 }
 
-$KeyAuthApp = new KeyAuth\api($name, $ownerid, $version);
+$KeyAuthApp = new KeyAuth\api($name, $ownerid);
 
 function findSubscription($name, $list)
 {
