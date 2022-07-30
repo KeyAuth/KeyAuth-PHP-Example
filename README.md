@@ -1,7 +1,7 @@
 # KeyAuth-PHP-Example
 PHP Example For KeyAuth Authentication System
 
-Set Application Name, OwnerID and Version in credentials.php and you're set.
+Set Application Name and OwnerID in credentials.php and you're set.
 
 Video Tutorial:
 
