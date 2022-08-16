@@ -243,6 +243,91 @@ class api
             return $json->response;
     }
 
+    function check() {
+        $data = array(
+            "type" => "check",
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid
+        );
+
+        $response = $this->req($data);
+
+        if ($response == "KeyAuth_Invalid") {
+            return false;
+        }
+        $json = json_decode($response);
+        if (!$json->success) {
+            return false;
+        } else if ($json->success)
+            return true;
+    }
+
+    function fetchOnline() {
+        $data = array(
+            "type" => "fetchOnline",
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid
+        );
+
+        $response = $this->req($data);
+        $json = json_decode($response);
+
+        if (!$json->success) {
+            return null;
+        } else if ($json->success) {
+            if (!is_array($json->users))
+                return null;
+            else {
+                return $json->users;
+            }
+        }
+    }
+
+    function chatGet($channel) {
+        $data = array(
+            "type" => "chatget",
+            "channel" => $channel,
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid
+        );
+
+        $response = $this->req($data);
+        $json = json_decode($response);
+
+        if (!$json->success) {
+            return null;
+        } else if ($json->success) {
+            if (!is_array($json->messages))
+                return null;
+            else {
+                return $json->messages;
+            }
+        }
+    }
+
+    function chatSend($message, $channel) {
+        $data = array(
+            "type" => "chatsend",
+            "message" => $message,
+            "channel" => $channel,
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid
+        );
+
+        $response = $this->req($data);
+        $json = json_decode($response);
+
+        if (!$json->success) {
+            return false;
+        } else if ($json->success) {
+            return true;
+        }
+    }
+
     private function req($data)
     {
         $curl = curl_init("https://keyauth.win/api/1.1/");
