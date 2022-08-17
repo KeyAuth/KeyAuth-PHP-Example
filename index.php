@@ -1,6 +1,6 @@
 <?php
-include 'KeyAuth.php';
-include 'Credentials.php';
+include 'keyauth.php';
+include 'credentials.php';
 
 if (isset($_SESSION['user_data'])) {
 	header("Location: dashboard/");

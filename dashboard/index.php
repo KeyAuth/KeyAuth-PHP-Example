@@ -1,8 +1,8 @@
 <?php
 error_reporting(0);
 
-require '../KeyAuth.php';
-require '../Credentials.php';
+require '../keyauth.php';
+require '../credentials.php';
 
 session_start();
 
