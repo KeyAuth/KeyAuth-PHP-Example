@@ -19,7 +19,7 @@ class api
     function init()
     {
         if ($this->name == "" || $this->ownerid == "") {
-            die("Please set your application name and ownerid in credentials.php");
+            die("Please set your application name, ownerId in credentials.php");
         }
 
         $data = array(
@@ -45,10 +45,10 @@ class api
             $this->error($json->message);
         else if ($json->success) {
             $_SESSION['sessionid'] = $json->sessionid;
-            $this->numUsers = $json->appinfo->numUsers;
-            $this->numKeys = $json->appinfo->numKeys;
-            $this->numOnlineUsers = $json->appinfo->numOnlineUsers;
-            $this->customerPanelLink = $json->appinfo->customerPanelLink;
+            $_SESSION["numUsers"] = $json->appinfo->numUsers;
+            $_SESSION["numKeys"] = $json->appinfo->numKeys;
+            $_SESSION["numOnlineUsers"] = $json->appinfo->numOnlineUsers;
+            $_SESSION["customerPanelLink"] = $json->appinfo->customerPanelLink;
         }
     }
 
@@ -243,27 +243,7 @@ class api
             return $json->response;
     }
 
-    function check() {
-        $data = array(
-            "type" => "check",
-            "sessionid" => $_SESSION['sessionid'],
-            "name" => $this->name,
-            "ownerid" => $this->ownerid
-        );
-
-        $response = $this->req($data);
-
-        if ($response == "KeyAuth_Invalid") {
-            return false;
-        }
-        $json = json_decode($response);
-        if (!$json->success) {
-            return false;
-        } else if ($json->success)
-            return true;
-    }
-
-    function fetchOnline() {
+    function FetchOnline() {
         $data = array(
             "type" => "fetchOnline",
             "sessionid" => $_SESSION['sessionid'],
@@ -272,20 +252,34 @@ class api
         );
 
         $response = $this->req($data);
+
         $json = json_decode($response);
 
         if (!$json->success) {
             return null;
-        } else if ($json->success) {
-            if (!is_array($json->users))
-                return null;
-            else {
-                return $json->users;
-            }
-        }
+        } else if ($json->success)
+            return $json->response;
     }
 
-    function chatGet($channel) {
+    function checkBlack() {
+        $data = array(
+            "type" => "checkBlack",
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid
+        );
+
+        $response = $this->req($data);
+
+        $json = json_decode($response);
+
+        if (!$json->success) {
+            return null;
+        } else if ($json->success)
+            return $json->response;
+    }
+
+    function ChatGet($channel) {
         $data = array(
             "type" => "chatget",
             "channel" => $channel,
@@ -295,20 +289,16 @@ class api
         );
 
         $response = $this->req($data);
+
         $json = json_decode($response);
 
         if (!$json->success) {
             return null;
-        } else if ($json->success) {
-            if (!is_array($json->messages))
-                return null;
-            else {
-                return $json->messages;
-            }
-        }
+        } else if ($json->success)
+            return $json->messages;
     }
 
-    function chatSend($message, $channel) {
+    function ChatSend($message, $channel) {
         $data = array(
             "type" => "chatsend",
             "message" => $message,
@@ -319,18 +309,21 @@ class api
         );
 
         $response = $this->req($data);
+
         $json = json_decode($response);
 
         if (!$json->success) {
-            return false;
-        } else if ($json->success) {
-            return true;
-        }
+            return null;
+        } else if ($json->success)
+            return $json->message;
+
     }
+
+
 
     private function req($data)
     {
-        $curl = curl_init("https://keyauth.win/api/1.1/");
+        $curl = curl_init("https://keyauth.win/api/1.2/");
         curl_setopt($curl, CURLOPT_USERAGENT, "KeyAuth");
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
@@ -364,5 +357,4 @@ class api
                 ';
     }
 }
-
 ?>

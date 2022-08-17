@@ -1,139 +1,182 @@
 <?php
-error_reporting(0);
+include 'KeyAuth.php';
+include 'Credentials.php';
 
-require '../keyauth.php';
-require '../credentials.php';
-
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
-if (!isset($_SESSION['user_data'])) // if user not logged in
-{
-	header("Location: ../");
+if (isset($_SESSION['user_data'])) {
+	header("Location: dashboard/");
 	exit();
 }
 
 $KeyAuthApp = new KeyAuth\api($name, $ownerid);
 
-// Check if user is logged in method 2
-if (!$KeyAuthApp->check()) {
-	session_destroy();
-	header("Location: ../");
-	exit();
+if (!isset($_SESSION['sessionid'])) {
+	$KeyAuthApp->init();
 }
 
-function findSubscription($name, $list)
-{
-	for ($i = 0; $i < count($list); $i++) {
-		if ($list[$i]->subscription == $name) {
-			return true;
-		}
-	}
-	return false;
-}
-
-$username = $_SESSION["user_data"]["username"];
-$subscription = $_SESSION["user_data"]["subscriptions"][0]->subscription;
-$subscriptions = $_SESSION["user_data"]["subscriptions"];
-$expiry = $_SESSION["user_data"]["subscriptions"][0]->expiry;
-
-if (isset($_POST['logout'])) {
-	session_destroy();
-	header("Location: ../");
-	exit();
-}
-
+$numKeys = $_SESSION["numUsers"];
+$numUsers = $_SESSION["numKeys"];
+$numOnlineUsers = $_SESSION["numOnlineUsers"];
+$customerPanelLink = $_SESSION["customerPanelLink"];
 ?>
-<html>
+
+<html lang="en">
 <head>
-	<title>Dashboard</title>
-	<script src="https://cdn.keyauth.win/dashboard/unixtolocal.js"></script>
+	<title>KeyAuth PHP Example</title>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="https://cdn.keyauth.win/assets/img/favicon.png" type="image/x-icon">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
+	<!-- WN change these to KeyAuth cdn -->
+	<link href="http://127.0.0.1/Keyauth-Redesign-main/app/assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
+	<link href="http://127.0.0.1/Keyauth-Redesign-main/app/assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
+
 </head>
-<body>
-	<form method="post"><button name="logout">Logout</button></form>
-	Logged in as <?php echo $username; ?>
-	<br>
+
+<body class="bg-dark">
+	<div class="d-flex flex-column flex-root">
+		<div class="d-flex flex-column flex-column-fluid bgi-position-y-bottom position-x-center bgi-no-repeat bgi-size-contain bgi-attachment-fixed">
+			<div class="d-flex flex-center flex-column flex-column-fluid p-10 pb-lg-20">
+				<div class="w-lg-500px bg-body rounded shadow-sm p-10 p-lg-15 mx-auto">
+					<form class="form w-100" method="post">
+						<div class="text-center mb-10">
+							<h1 class="text-light mb-3">KeyAuth PHP Example</h1>
+						</div>
+
+						<div class="fv-row mb-10">
+							<!-- username -->
+							<label class="form-label fs-6 fw-bolder text-light">Username</label>
+							<input class="form-control form-control-lg form-control-solid" type="text" name="username" autocomplete="on" />
+							<div class="form-group row">
+								</br>
+							</div>
+							<!-- password -->
+							<div class="fv-row mb-4">
+								<div class="d-flex flex-stack mb-2">
+									<label class="form-label fw-bolder text-light fs-6 mb-0">Password</label>
+								</div>
+								<input class="form-control form-control-lg form-control-solid" type="password" name="password" autocomplete="on" />
+							</div>
+							<!-- License -->
+							<div class="fv-row mb-6">
+								<div class="d-flex flex-stack mb-2">
+									<label class="form-label fw-bolder text-light fs-6 mb-0">License</label>
+								</div>
+								<input class="form-control form-control-lg form-control-solid" type="text" name="key" autocomplete="on" />
+							</div>
+							<div class="text-center">
+								<button name="login" class="btn btn-lg btn-primary w-100 mb-5">
+									<span class="indicator-label">Login</span>
+								</button>
+								<button name="register" class="btn btn-lg btn-primary w-100 mb-5">
+									<span class="indicator-label">Register</span>
+								</button>
+								<button name="upgrade" class="btn btn-lg btn-primary w-100 mb-5">
+									<span class="indicator-label">Upgrade</span>
+								</button>
+								<button name="license" class="btn btn-lg btn-primary w-100 mb-5">
+									<span class="indicator-label">License</span>
+								</button>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="d-flex flex-center flex-column-auto p-10">
+					<!--begin::Links-->
+					<div class="d-flex align-items-center fw-bold fs-6">
+						<a class="text-muted text-hover-primary px-2">Online Users: <?php echo $numOnlineUsers; ?></a>
+						<a class="text-muted text-hover-primary px-2">Total Keys: <?php echo $numKeys; ?></a>
+						<a class="text-muted text-hover-primary px-2">Total Users: <?php echo $numUsers; ?></a>
+					</div>
+					<!--end::Links-->
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
 
 	<?php
-	// Check Subscriptions..
-	for ($i = 0; $i < count($subscriptions); $i++) {
-		echo "#" . $i + 1 . " Subscription: " . $subscriptions[$i]->subscription . " - Subscription Expires: " . "<script>document.write(convertTimestamp(" . $subscriptions[$i]->expiry . "));</script>";
-	}
-
-	// Check Online users..
-	$onlineUsers = $KeyAuthApp->fetchOnline();
-	if ($onlineUsers == null) {
-		$Online = "No online Users";
-	} else {
-		$Online = "Online Users: <br>";
-		for ($i = 0; $i < count($onlineUsers); $i++) {
-			if ($i == count($onlineUsers) - 1) {
-				$Online .= $onlineUsers[$i]->credential;
-			} else {
-				$Online .= $onlineUsers[$i]->credential . "<br>";
-			}
-		}
-
-		echo "<br><p style=\"font-weight: bold; font-size: 12px;\">" . $Online . "</p>";
-	}
-
-	// Check chat Messages
-
-	//$KeyAuthApp->chatSend("MESSAGE", "CHANNEL"); // Send a message to a channel
-	$chatMessages = $KeyAuthApp->chatGet("CHANNEL"); // Return Message Array if existing.
-	if ($chatMessages == null) {
-		$Msgs = "No chat Messages";
-	} else {
-		$Msgs = "Chat Messages: <br>";
-		for ($i = 0; $i < count($chatMessages); $i++) {
-			if ($i == count($chatMessages) - 1) {
-				$Msgs .= "<script>document.write(convertTimestamp(" . $chatMessages[$i]->timestamp . "));</script>" . " - " . $chatMessages[$i]->author . ": " . $chatMessages[$i]->message;
-			} else {
-				$Msgs .= "<script>document.write(convertTimestamp(" . $chatMessages[$i]->timestamp . "));</script>" . " - " . $chatMessages[$i]->author . ": " . $chatMessages[$i]->message . "<br>";
-			}
+	if (isset($_POST['login'])) {
+		// login with username and password
+		if ($KeyAuthApp->login($_POST['username'], $_POST['password'])) {
+			echo "<meta http-equiv='Refresh' Content='2; url=dashboard/'>";
+			echo '
+                            <script type=\'text/javascript\'>
+                            
+                            const notyf = new Notyf();
+                            notyf
+                              .success({
+                                message: \'You have successfully logged in!\',
+                                duration: 3500,
+                                dismissible: true
+                              });                
+                            
+                            </script>
+                            ';
 		}
 	}
 
-	echo "<br><p style=\"font-weight: bold; font-size: 12px;\">" . $Msgs . "</p>";
+	if (isset($_POST['register'])) {
+		// register with username,password,key
+		if ($KeyAuthApp->register($_POST['username'], $_POST['password'], $_POST['key'])) {
+			echo "<meta http-equiv='Refresh' Content='2; url=dashboard/'>";
+			echo '
+                            <script type=\'text/javascript\'>
+                            
+                            const notyf = new Notyf();
+                            notyf
+                              .success({
+                                message: \'You have successfully registered!\',
+                                duration: 3500,
+                                dismissible: true
+                              });                
+                            
+                            </script>
+                            ';
+		}
+	}
+
+	if (isset($_POST['license'])) {
+		// login with just key
+		if ($KeyAuthApp->license($_POST['key'])) {
+			echo "<meta http-equiv='Refresh' Content='2; url=dashboard/'>";
+			echo '
+                            <script type=\'text/javascript\'>
+                            
+                            const notyf = new Notyf();
+                            notyf
+                              .success({
+                                message: \'You have successfully logged in!\',
+                                duration: 3500,
+                                dismissible: true
+                              });                
+                            
+                            </script>
+                            ';
+		}
+	}
+
+	if (isset($_POST['upgrade'])) {
+		// login with just key
+		if ($KeyAuthApp->upgrade($_POST['username'], $_POST['key'])) {
+			// don't login, upgrade function is not for authentication, it's simply for redeeming keys
+			echo '
+                            <script type=\'text/javascript\'>
+                            
+                            const notyf = new Notyf();
+                            notyf
+                              .success({
+                                message: \'Upgraded Successfully! Now login please.\',
+                                duration: 3500,
+                                dismissible: true
+                              });                
+                            
+                            </script>
+                            ';
+		}
+	}
 	?>
 
-	<br>
-	Does subscription with name <code style="background-color: #eee;border-radius: 3px;font-family: courier, monospace;padding: 0 3px;">default</code> exist: <?php echo ((findSubscription("default", $_SESSION["user_data"]["subscriptions"]) ? 1 : 0) ? 'yes' : 'no'); ?>
 </body>
 </html>
-
-<?php
-#region Extra Functions
-/*
-//* Get Public Variable
-$var = $KeyAuthApp->var("varName");
-echo "Variable Data: " . $var;
-
-//* Get User Variable
-$var = $KeyAuthApp->getvar("varName");
-echo "Variable Data: " . $var;
-
-//* Set Up User Variable
-$KeyAuthApp->setvar("varName", "varData");
-
-//* Log Something to the KeyAuth webhook that you have set up on app settings
-$KeyAuthApp->log("message");
-
-//* Basic Webhook with params
-$result = $KeyAuthApp->webhook("WebhookID", "&type=add&expiry=1&mask=XXXXXX-XXXXXX-XXXXXX-XXXXXX-XXXXXX-XXXXXX&level=1&amount=1&format=text");
-echo "<br> Result from Webhook: " . $result;
-
-//* Webhook with body and content type
-$result = $KeyAuthApp->webhook("WebhookID", "", "{\"content\": \"webhook message here\",\"embeds\": null}", "application/json");
-echo "<br> Result from Webhook: " . $result;
-
-
-//* If first sub is what ever then run code
-if ($subscription === "Premium") {
-	Premium Subscription Code ...
-}
-
-*/
-#endregion
-?>
