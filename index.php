@@ -27,10 +27,9 @@ $customerPanelLink = $_SESSION["customerPanelLink"];
 	<link rel="shortcut icon" href="https://cdn.keyauth.win/assets/img/favicon.png" type="image/x-icon">
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />
-	<!-- WN change these to KeyAuth cdn -->
-	<link href="http://127.0.0.1/Keyauth-Redesign-main/app/assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
-	<link href="http://127.0.0.1/Keyauth-Redesign-main/app/assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
 
+	<link href="https://cdn.keyauth.cc/v2/assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css">
+	<link href="https://cdn.keyauth.cc/v2/assets/css/style.bundle.css" rel="stylesheet" type="text/css">
 </head>
 
 <body class="bg-dark">
