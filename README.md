@@ -1,8 +1,6 @@
 # KeyAuth-PHP-Example
 PHP Example For KeyAuth Authentication System
 
-Set Application Name and OwnerID in credentials.php and you're set.
-
 Video Tutorial:
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=hU6yXGR5R1Y
@@ -21,3 +19,135 @@ Please add a Cloudflare firewall rule to show challenge to users, then set chall
 KeyAuth is an Open source authentication system with cloud hosting plans as well. Client SDKs available for C++, C#, Python, Rust, PHP, JS and VB.NET.
 KeyAuth several unique features such as memory streaming, webhook function where you can send requests to API without leaking the API, discord webhook notifications, ban the user securely through the application at your discretion.
 Feel free to join https://keyauth.win/discord/ if you have questions or suggestions.
+
+**`KeyAuthApp` instance definition**
+
+Visit and select your application, then click on the **PHP** tab
+
+It'll provide you with the code which you should replace with in the `Program.cs` file (or `Login.cs` file if using Form example)
+
+```php
+$KeyAuthApp = new KeyAuth\api("appNameHere", "keyAuthOwnerIDHere");
+```
+
+**Initialize application**
+
+You must call this function prior to using any other KeyAuth function. Otherwise the other KeyAuth function won't work.
+
+```php
+$KeyAuthApp->init();
+```
+
+**Display application information**
+
+```php
+$numKeys = $_SESSION["numUsers"];
+$numUsers = $_SESSION["numKeys"];
+$numOnlineUsers = $_SESSION["numOnlineUsers"];
+$customerPanelLink = $_SESSION["customerPanelLink"];
+```
+
+**Login with username/password**
+
+```php
+if ($KeyAuthApp->login("userNameHere", "passWordHere")) {
+  // send user to dashboard or wherever you prefer
+}
+```
+
+**Register with username/password/key**
+
+```php
+if ($KeyAuthApp->register("userNameHere", "passWordHere", "licenseKeyHere")) {
+  // send user to dashboard or wherever you prefer
+}
+```
+
+**Upgrade user username/key**
+
+Used so the user can add extra time to their account by claiming new key.
+
+> **Warning**
+> No password is needed to upgrade account. So, unlike login, register, and license functions - you should **not** log user in after successful upgrade.
+
+```php
+if ($KeyAuthApp->upgrade("userNameHere", "licenseKeyHere")) {
+			// don't login, upgrade function is not for authentication, it's simply for redeeming keys
+      // make the user login with their username and password now.
+}
+```
+
+**Login with just license key**
+
+Users can use this function if their license key has never been used before, and if it has been used before. So if you plan to just allow users to use keys, you can remove the login and register functions from your code.
+
+```php
+if ($KeyAuthApp->license("licenseKeyHere")) {
+      // send user to dashboard or wherever you prefer
+}
+```
+
+**User Data**
+
+Show information for current logged-in user.
+
+```php
+$username = $_SESSION["user_data"]["username"];
+$subscriptions = $_SESSION["user_data"]["subscriptions"];
+$subscription = $_SESSION["user_data"]["subscriptions"][0]->subscription;
+$expiry = $_SESSION["user_data"]["subscriptions"][0]->expiry;
+for ($i = 0; $i < count($subscriptions); $i++) {
+    echo "#" . $i + 1 . " Subscription: " . $subscriptions[$i]->subscription . " - Subscription Expires: " . "<script>document.write(convertTimestamp(" . $subscriptions[$i]->expiry . "));</script>";
+}
+```
+
+**Check subscription name of user**
+
+If you want to wall off parts of your app to only certain users, you can have multiple subscriptions with different names. Then, when you create licenses that correspond to the level of that subscription, users who use those licenses will get a subscription with the name of the subscription that corresponds to the level of the license key they used. The `SubExist` function is in the `Program.cs` file
+
+```php
+if(findSubscription("default", $_SESSION["user_data"]["subscriptions"])) {
+    // user has subscription with name "default"
+}
+else {
+    // user does not have subscription with name "default"
+}
+```
+
+**Application variables**
+
+A string that is kept on the server-side of KeyAuth. On the dashboard you can choose for each variable to be authenticated (only logged in users can access), or not authenticated (any user can access before login). These are global and static for all users, unlike User Variables which will be dicussed below this section.
+
+```php
+//* Get Public Variable
+$var = $KeyAuthApp->var("varName");
+echo "Variable Data: " . $var;
+```
+
+**User Variables**
+
+User variables are strings kept on the server-side of KeyAuth. They are specific to users. They can be set on Dashboard in the Users tab, via SellerAPI, or via your loader using the code below. `discord` is the user variable name you fetch the user variable by. `test#0001` is the variable data you get when fetching the user variable.
+
+```php
+//* Set Up User Variable
+$KeyAuthApp->setvar("varName", "varData");
+```
+
+And here's how you fetch the user variable:
+
+```php
+//* Get User Variable
+$var = $KeyAuthApp->getvar("varName");
+echo "Variable Data: " . $var;
+```
+
+**Application Logs**
+
+Can be used to log data. Good for anti-debug alerts and maybe error debugging. If you set Discord webhook in the app settings of the Dashboard, it will send log messages to your Discord webhook rather than store them on site. It's recommended that you set Discord webhook, as logs on site may be deleted after a couple months of their creation.
+
+You can use the log function before login & after login.
+
+```php
+//* Log Something to the KeyAuth webhook that you have set up on app settings
+$KeyAuthApp->log("message");
+```
