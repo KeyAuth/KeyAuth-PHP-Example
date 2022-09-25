@@ -42,7 +42,7 @@ class api
         }
 
         if (!$json->success)
-            $this->error($json->message);
+            die($json->message);
         else if ($json->success) {
             $_SESSION['sessionid'] = $json->sessionid;
             $_SESSION["numUsers"] = $json->appinfo->numUsers;
