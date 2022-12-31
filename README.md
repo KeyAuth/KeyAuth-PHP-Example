@@ -1,30 +1,48 @@
 # KeyAuth-PHP-Example
 PHP Example For https://keyauth.cc Authentication System
 
-#### **Video Tutorial:**
+## **Video Tutorial:**
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=hU6yXGR5R1Y
 " target="_blank"><img src="https://i.imgur.com/IFHFaiI.png" 
 alt="Click here to see Installation Video!" width="500" height="250" border="10" /></a>
 
-#### **Bugs**
+## **Bugs**
 
 If the default example not added to your software isn't functioning how it should, please join the Discord server https://discord.gg/keyauth and submit the issue in the `#bugs` channel.
 
 However, we do **NOT** provide support for adding KeyAuth to your project. If you can't figure this out you should use Google or YouTube to learn more about the programming language you want to sell a program in.
 
-#### Anti-DDoS Security 
+## Copyright License
+
+KeyAuth is licensed under **Elastic License 2.0**
+
+* You may not provide the software to third parties as a hosted or managed
+service, where the service provides users with access to any substantial set of
+the features or functionality of the software.
+
+* You may not move, change, disable, or circumvent the license key functionality
+in the software, and you may not remove or obscure any functionality in the
+software that is protected by the license key.
+
+* You may not alter, remove, or obscure any licensing, copyright, or other notices
+of the licensor in the software. Any use of the licensor’s trademarks is subject
+to applicable law.
+
+Thank you for your compliance, we work hard on the development of KeyAuth and do not appreciate our copyright being infringed.
+
+## Anti-DDoS Security 
 
 Please add a Cloudflare firewall rule to show challenge to users, then set challenge passage to 1 year so they don't have to frequently complete challenge
 ![image](https://user-images.githubusercontent.com/83034852/168191187-236e8be7-1b1c-4398-9360-462baa800fac.png)
 ![image](https://user-images.githubusercontent.com/83034852/168191204-d553f134-943b-466e-a98f-255fbab204c6.png)
 
 
-#### **What is KeyAuth?**
+## **What is KeyAuth?**
 
 KeyAuth is an Open source authentication system with cloud hosting plans as well. Client SDKs available for [C#](https://github.com/KeyAuth/KeyAuth-CSHARP-Example), [C++](https://github.com/KeyAuth/KeyAuth-CPP-Example), [Python](https://github.com/KeyAuth/KeyAuth-Python-Example), [Java](https://github.com/SprayDown/KeyAuth-JAVA-api), [JavaScript](https://github.com/mazkdevf/KeyAuth-JS-Example), [VB.NET](https://github.com/KeyAuth/KeyAuth-VB-Example), [PHP](https://github.com/KeyAuth/KeyAuth-PHP-Example), [Rust](https://github.com/KeyAuth/KeyAuth-Rust-Example), [Go](https://github.com/mazkdevf/KeyAuth-Go-Example), [Lua](https://github.com/mazkdevf/KeyAuth-Lua-Examples), [Ruby](https://github.com/mazkdevf/KeyAuth-Ruby-Example), and [Perl](https://github.com/mazkdevf/KeyAuth-Perl-Example). KeyAuth has several unique features such as memory streaming, webhook function where you can send requests to API without leaking the API, discord webhook notifications, ban the user securely through the application at your discretion. Feel free to join https://discord.gg/keyauth if you have questions or suggestions.
 
-#### **`KeyAuthApp` instance definition**
+## **`KeyAuthApp` instance definition**
 
 Visit and select your application, then click on the **PHP** tab
 
@@ -34,7 +52,7 @@ It'll provide you with the code which you should replace with in the `Program.cs
 $KeyAuthApp = new KeyAuth\api("appNameHere", "keyAuthOwnerIDHere");
 ```
 
-#### **Initialize application**
+## **Initialize application**
 
 You must call this function prior to using any other KeyAuth function. Otherwise the other KeyAuth function won't work.
 
@@ -42,7 +60,7 @@ You must call this function prior to using any other KeyAuth function. Otherwise
 $KeyAuthApp->init();
 ```
 
-#### **Display application information**
+## **Display application information**
 
 ```php
 $numKeys = $_SESSION["numUsers"];
@@ -51,7 +69,7 @@ $numOnlineUsers = $_SESSION["numOnlineUsers"];
 $customerPanelLink = $_SESSION["customerPanelLink"];
 ```
 
-#### **Login with username/password**
+## **Login with username/password**
 
 ```php
 if ($KeyAuthApp->login("userNameHere", "passWordHere")) {
@@ -59,7 +77,7 @@ if ($KeyAuthApp->login("userNameHere", "passWordHere")) {
 }
 ```
 
-#### **Register with username/password/key**
+## **Register with username/password/key**
 
 ```php
 if ($KeyAuthApp->register("userNameHere", "passWordHere", "licenseKeyHere")) {
@@ -67,7 +85,7 @@ if ($KeyAuthApp->register("userNameHere", "passWordHere", "licenseKeyHere")) {
 }
 ```
 
-#### **Upgrade user username/key**
+## **Upgrade user username/key**
 
 Used so the user can add extra time to their account by claiming new key.
 
@@ -81,7 +99,7 @@ if ($KeyAuthApp->upgrade("userNameHere", "licenseKeyHere")) {
 }
 ```
 
-#### **Login with just license key**
+## **Login with just license key**
 
 Users can use this function if their license key has never been used before, and if it has been used before. So if you plan to just allow users to use keys, you can remove the login and register functions from your code.
 
@@ -91,7 +109,7 @@ if ($KeyAuthApp->license("licenseKeyHere")) {
 }
 ```
 
-#### **User Data**
+## **User Data**
 
 Show information for current logged-in user.
 
@@ -105,7 +123,7 @@ for ($i = 0; $i < count($subscriptions); $i++) {
 }
 ```
 
-#### **Check subscription name of user**
+## **Check subscription name of user**
 
 If you want to wall off parts of your app to only certain users, you can have multiple subscriptions with different names. Then, when you create licenses that correspond to the level of that subscription, users who use those licenses will get a subscription with the name of the subscription that corresponds to the level of the license key they used. The `SubExist` function is in the `Program.cs` file
 
@@ -118,7 +136,7 @@ else {
 }
 ```
 
-#### **Application variables**
+## **Application variables**
 
 A string that is kept on the server-side of KeyAuth. On the dashboard you can choose for each variable to be authenticated (only logged in users can access), or not authenticated (any user can access before login). These are global and static for all users, unlike User Variables which will be dicussed below this section.
 
@@ -128,7 +146,7 @@ $var = $KeyAuthApp->var("varName");
 echo "Variable Data: " . $var;
 ```
 
-#### **User Variables**
+## **User Variables**
 
 User variables are strings kept on the server-side of KeyAuth. They are specific to users. They can be set on Dashboard in the Users tab, via SellerAPI, or via your loader using the code below. `discord` is the user variable name you fetch the user variable by. `test#0001` is the variable data you get when fetching the user variable.
 
@@ -145,7 +163,7 @@ $var = $KeyAuthApp->getvar("varName");
 echo "Variable Data: " . $var;
 ```
 
-#### **Application Logs**
+## **Application Logs**
 
 Can be used to log data. Good for anti-debug alerts and maybe error debugging. If you set Discord webhook in the app settings of the Dashboard, it will send log messages to your Discord webhook rather than store them on site. It's recommended that you set Discord webhook, as logs on site may be deleted after a couple months of their creation.
 
