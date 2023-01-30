@@ -46,7 +46,7 @@ KeyAuth is an Open source authentication system with cloud hosting plans as well
 
 Visit https://keyauth.cc/app/ and select your application, then click on the **PHP** tab
 
-It'll provide you with the code which you should replace with in the `Program.cs` file (or `Login.cs` file if using Form example)
+It'll provide you with the code which you should replace with in the `credentials.php` file.
 
 ```php
 $KeyAuthApp = new KeyAuth\api("appNameHere", "keyAuthOwnerIDHere");
