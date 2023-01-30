@@ -44,7 +44,7 @@ KeyAuth is an Open source authentication system with cloud hosting plans as well
 
 ## **`KeyAuthApp` instance definition**
 
-Visit and select your application, then click on the **PHP** tab
+Visit https://keyauth.cc/app/ and select your application, then click on the **PHP** tab
 
 It'll provide you with the code which you should replace with in the `Program.cs` file (or `Login.cs` file if using Form example)
 
