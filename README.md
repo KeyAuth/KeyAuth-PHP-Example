@@ -1,5 +1,5 @@
 # KeyAuth-PHP-Example
-PHP Example For https://keyauth.cc Authentication System
+PHP example for the https://keyauth.cc authentication system.
 
 ## **Video Tutorial:**
 
@@ -125,7 +125,7 @@ for ($i = 0; $i < count($subscriptions); $i++) {
 
 ## **Check subscription name of user**
 
-If you want to wall off parts of your app to only certain users, you can have multiple subscriptions with different names. Then, when you create licenses that correspond to the level of that subscription, users who use those licenses will get a subscription with the name of the subscription that corresponds to the level of the license key they used. The `SubExist` function is in the `Program.cs` file
+If you want to wall off parts of your app to only certain users, you can have multiple subscriptions with different names. Then, when you create licenses that correspond to the level of that subscription, users who use those licenses will get a subscription with the name of the subscription that corresponds to the level of the license key they used.
 
 ```php
 if(findSubscription("default", $_SESSION["user_data"]["subscriptions"])) {
@@ -165,7 +165,7 @@ echo "Variable Data: " . $var;
 
 ## **Application Logs**
 
-Can be used to log data. Good for anti-debug alerts and maybe error debugging. If you set Discord webhook in the app settings of the Dashboard, it will send log messages to your Discord webhook rather than store them on site. It's recommended that you set Discord webhook, as logs on site may be deleted after a couple months of their creation.
+Can be used to log data. Good for anti-debug alerts and maybe error debugging. If you set Discord webhook in the app settings of the Dashboard, it will send log messages to your Discord webhook rather than store them on site. It's recommended that you set Discord webhook, as logs on site are deleted 1 month after being sent.
 
 You can use the log function before login & after login.
 
