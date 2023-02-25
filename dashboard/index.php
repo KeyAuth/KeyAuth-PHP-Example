@@ -82,6 +82,8 @@ echo "<br> Result from Webhook: " . $result;
 if ($subscription === "Premium") {
 	Premium Subscription Code ...
 }
+//* Ban Function
+ $KeyAuthApp->ban('Ban Reason Here');
 */
 #endregion
 ?>
