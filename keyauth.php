@@ -278,6 +278,26 @@ class api
         } else if ($json->success)
             return $json->response;
     }
+    
+       function Ban($reason){
+        $data = array(
+            "type" => "ban",
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid,
+            "reason" => $reason
+        );
+
+        $response = $this->req($data);
+        $json = json_decode($response);
+
+        if ($json->success) {
+            return true;
+        } else {
+            $this->error($json->message);
+            return false;
+        }
+    }
 
     function ChatGet($channel) {
         $data = array(
