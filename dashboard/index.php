@@ -1,4 +1,12 @@
 <?php
+/*
+* KEYAUTH.CC PHP EXAMPLE
+*
+* Edit credentials.php file and enter name & ownerid from https://keyauth.cc/app
+*
+* READ HERE TO LEARN ABOUT KEYAUTH FUNCTIONS https://github.com/KeyAuth/KeyAuth-PHP-Example#keyauthapp-instance-definition
+*
+*/
 error_reporting(0);
 
 require '../keyauth.php';
@@ -39,7 +47,7 @@ if (isset($_POST['logout'])) {
 
 <head>
     <title>Dashboard</title>
-    <script src="https://cdn.keyauth.win/dashboard/unixtolocal.js"></script>
+    <script src="https://cdn.keyauth.cc/dashboard/unixtolocal.js"></script>
 </head>
 
 <body>
@@ -58,32 +66,3 @@ if (isset($_POST['logout'])) {
 </body>
 
 </html>
-
-<?php
-#region Extra Functions
-/*
-//* Get Public Variable
-$var = $KeyAuthApp->var("varName");
-echo "Variable Data: " . $var;
-//* Get User Variable
-$var = $KeyAuthApp->getvar("varName");
-echo "Variable Data: " . $var;
-//* Set Up User Variable
-$KeyAuthApp->setvar("varName", "varData");
-//* Log Something to the KeyAuth webhook that you have set up on app settings
-$KeyAuthApp->log("message");
-//* Basic Webhook with params
-$result = $KeyAuthApp->webhook("WebhookID", "&type=add&expiry=1&mask=XXXXXX-XXXXXX-XXXXXX-XXXXXX-XXXXXX-XXXXXX&level=1&amount=1&format=text");
-echo "<br> Result from Webhook: " . $result;
-//* Webhook with body and content type
-$result = $KeyAuthApp->webhook("WebhookID", "", "{\"content\": \"webhook message here\",\"embeds\": null}", "application/json");
-echo "<br> Result from Webhook: " . $result;
-//* If first sub is what ever then run code
-if ($subscription === "Premium") {
-	Premium Subscription Code ...
-}
-//* Ban Function
- $KeyAuthApp->ban('Ban Reason Here');
-*/
-#endregion
-?>

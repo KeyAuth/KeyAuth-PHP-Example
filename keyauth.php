@@ -1,25 +1,27 @@
 <?php
-
+/*
+* KEYAUTH.CC PHP EXAMPLE
+*
+* Edit credentials.php file and enter name & ownerid from https://keyauth.cc/app
+*
+* READ HERE TO LEARN ABOUT KEYAUTH FUNCTIONS https://github.com/KeyAuth/KeyAuth-PHP-Example#keyauthapp-instance-definition
+*
+*/
 namespace KeyAuth;
 
 session_start();
 
 class api
 {
-    public $name, $ownerid;
-
-    public $numUsers, $numKeys, $numOnlineUsers, $customerPanelLink;
-
-    function __construct($name, $ownerid)
-    {
-        $this->name = $name;
-        $this->ownerid = $ownerid;
-    }
+    public function __construct(
+                public string $name,
+                public string $ownerid,
+    ) {}
 
     function init()
     {
-        if ($this->name == "" || $this->ownerid == "") {
-            die("Please set your application name, ownerId in credentials.php");
+        if ($this->name == "" || strlen($this->ownerid) != 10) {
+            die("Go to <a href=\"https://keyauth.cc/app/\" target=\"blank\">https://keyauth.cc/app/</a> and click the <b>PHP</b> button in the App credentials code. Copy that & paste in <code style=\"background-color: #eee;border-radius: 3px;font-family: courier, monospace;padding: 0 3px;\">credentials.php</code>");
         }
 
         $data = array(
@@ -31,24 +33,19 @@ class api
         $response = $this->req($data);
 
         if ($response == "KeyAuth_Invalid") {
-            die("Application not found");
+            die("Go to <a href=\"https://keyauth.cc/app/\" target=\"blank\">https://keyauth.cc/app/</a> and click the <b>PHP</b> button in the App credentials code. Copy that & paste in <code style=\"background-color: #eee;border-radius: 3px;font-family: courier, monospace;padding: 0 3px;\">credentials.php</code>");
         }
 
         $json = json_decode($response);
 
         if ($json->message == "This program hash does not match, make sure you're using latest version") {
-            $message = "This Application have hash check enabled, Please Disable it so you can access this.";
-            die($message); // Dies + Prints Error Message.
+            die("You must disable hash check at <a href=\"https://keyauth.cc/app/?page=app-settings\" target=\"blank\">https://keyauth.cc/app/?page=app-settings</a>");
         }
 
         if (!$json->success)
             die($json->message);
         else if ($json->success) {
             $_SESSION['sessionid'] = $json->sessionid;
-            $_SESSION["numUsers"] = $json->appinfo->numUsers;
-            $_SESSION["numKeys"] = $json->appinfo->numKeys;
-            $_SESSION["numOnlineUsers"] = $json->appinfo->numOnlineUsers;
-            $_SESSION["customerPanelLink"] = $json->appinfo->customerPanelLink;
         }
     }
 
@@ -339,8 +336,6 @@ class api
 
     }
 
-
-
     private function req($data)
     {
         $curl = curl_init("https://keyauth.win/api/1.2/");
@@ -368,6 +363,23 @@ class api
                 const notyf = new Notyf();
                 notyf
                   .error({
+                    message: \'' . addslashes($msg) . '\',
+                    duration: 3500,
+                    dismissible: true
+                  });                
+                
+                </script>
+                ';
+    }
+
+    public function success($msg)
+    {
+        echo '
+                <script type=\'text/javascript\'>
+                
+                const notyf = new Notyf();
+                notyf
+                  .success({
                     message: \'' . addslashes($msg) . '\',
                     duration: 3500,
                     dismissible: true
