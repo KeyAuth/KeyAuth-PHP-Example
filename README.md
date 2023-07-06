@@ -173,3 +173,37 @@ You can use the log function before login & after login.
 //* Log Something to the KeyAuth webhook that you have set up on app settings
 $KeyAuthApp->log("message");
 ```
+
+
+## Server-sided webhooks
+
+Tutorial video https://www.youtube.com/watch?v=ENRaNPPYJbc
+
+> **Note**
+> Read documentation for KeyAuth webhooks here https://docs.keyauth.cc/website/dashboard/webhooks
+
+Send HTTP requests to URLs securely without leaking the URL in your application. You should definitely use if you want to send requests to SellerAPI from your application, otherwise if you don't use you'll be leaking your seller key to everyone. And then someone can mess up your application.
+
+1st example is how to send request with no POST data. just a GET request to the URL. `7kR0UedlVI` is the webhook ID, `https://keyauth.win/api/seller/?sellerkey=sellerkeyhere&type=black` is what you should put as the webhook endpoint on the dashboard. This is the part you don't want users to see. And then you have `&ip=1.1.1.1&hwid=abc` in your program code which will be added to the webhook endpoint on the keyauth server and then the request will be sent.
+
+2nd example included post data, JSON. It's an example request to Discord webhook `7kR0UedlVI` is the webhook ID, `https://discord.com/api/webhooks/...` is the webhook endpoint.
+
+```php
+$result = $KeyAuthApp->webhook("7kR0UedlVI", "&ip=1.1.1.1&hwid=abc");
+echo "<br> Result from Webhook: " . $result;
+
+$result = $KeyAuthApp->webhook("7kR0UedlVI", "", "{\"content\": \"webhook message here\",\"embeds\": null}", "application/json"); // if Discord webhook message successful, response will be empty
+echo "<br> Result from Webhook: " . $result;
+```
+
+## Ban the user
+
+Ban the user and blacklist their HWID and IP Address.
+
+Function only works after login.
+
+The reason paramater will be the ban reason displayed to the user if they try to login, and visible on the KeyAuth dashboard.
+
+```php
+$KeyAuthApp->ban('Broke the rules');
+```
