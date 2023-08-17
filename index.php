@@ -52,30 +52,20 @@ if (!isset($_SESSION['sessionid'])) {
                                                         <!-- username -->
                                                         <label
                                                                 class="form-label fs-6 fw-bolder text-light">Username</label>
-                                                        <input class="form-control form-control-lg form-control-solid"
-                                                                type="text" name="username" autocomplete="on" />
-                                                        <div class="form-group row">
-                                                                </br>
-                                                        </div>
+                                                        <input class="form-control form-control text-light"
+                                                                type="text" name="username" placeholder="Enter username here" autocomplete="on" />
                                                         <!-- password -->
-                                                        <div class="fv-row mb-4">
-                                                                <div class="d-flex flex-stack mb-2">
                                                                         <label
                                                                                 class="form-label fw-bolder text-light fs-6 mb-0">Password</label>
-                                                                </div>
-                                                                <input class="form-control form-control-lg form-control-solid"
-                                                                        type="password" name="password"
+                                                                <input class="form-control form-control text-light"
+                                                                        type="password" placeholder="Enter password here" name="password"
                                                                         autocomplete="on" />
-                                                        </div>
                                                         <!-- License -->
-                                                        <div class="fv-row mb-6">
-                                                                <div class="d-flex flex-stack mb-2">
                                                                         <label
                                                                                 class="form-label fw-bolder text-light fs-6 mb-0">License</label>
-                                                                </div>
-                                                                <input class="form-control form-control-lg form-control-solid"
-                                                                        type="text" name="key" autocomplete="on" />
-                                                        </div>
+                                                                <input class="form-control form-control text-light"
+                                                                        type="text" placeholder="Enter license key" name="key" autocomplete="on" />
+                                                        <br>
                                                         <div class="text-center">
                                                                 <button name="login"
                                                                         class="btn btn-lg btn-primary w-100 mb-5">

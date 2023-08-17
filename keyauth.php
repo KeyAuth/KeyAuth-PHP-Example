@@ -13,10 +13,14 @@ session_start();
 
 class api
 {
-    public function __construct(
-                public string $name,
-                public string $ownerid,
-    ) {}
+    public $name;
+    public $ownerid;
+
+    public function __construct(string $name, string $ownerid)
+    {
+        $this->name = $name;
+        $this->ownerid = $ownerid;
+    }
 
     function init()
     {
