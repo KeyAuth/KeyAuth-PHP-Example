@@ -56,13 +56,13 @@ if (isset($_POST['logout'])) {
     <br>
 
     <?php
-    for ($i = 0; $i < count($subscriptions); $i++) {
-        echo "#" . $i + 1 . " Subscription: " . $subscriptions[$i]->subscription . " - Subscription Expires: " . "<script>document.write(convertTimestamp(" . $subscriptions[$i]->expiry . "));</script>";
-    }
-    ?>
+for ($i = 0; $i < count($subscriptions); $i++) {
+    echo "#" . ($i + 1) . " Subscription: " . $subscriptions[$i]->subscription . " - Subscription Expires: " . date('Y-m-d H:i', $subscriptions[$i]->expiry);
+}
+?> <br>
 
-    <br>
-    Does subscription with name <code style="background-color: #eee;border-radius: 3px;font-family: courier, monospace;padding: 0 3px;">default</code> exist: <?php echo ((findSubscription("default", $_SESSION["user_data"]["subscriptions"]) ? 1 : 0) ? 'yes' : 'no'); ?>
+Does subscription with name <code style="background-color: #eee;border-radius: 3px;font-family: courier, monospace;padding: 0 3px;">Owner</code> exist:
+<?php echo ((findSubscription("Owner", $_SESSION["user_data"]["subscriptions"])) ? 'yes' : 'no'); ?>
 </body>
 
 </html>
