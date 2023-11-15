@@ -1,4 +1,4 @@
-# KeyAuth-PHP-Example
+# KeyAuth-PHP-Example : Please star 🌟
 PHP example for the https://keyauth.cc authentication system.
 
 ## **Video Tutorial:**
