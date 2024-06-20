@@ -63,8 +63,8 @@ $KeyAuthApp->init();
 ## **Display application information**
 
 ```php
-$numKeys = $_SESSION["numUsers"];
-$numUsers = $_SESSION["numKeys"];
+$numKeys = $_SESSION["numKeys"];
+$numUsers = $_SESSION["numUsers"];
 $numOnlineUsers = $_SESSION["numOnlineUsers"];
 $customerPanelLink = $_SESSION["customerPanelLink"];
 ```
