@@ -9,7 +9,12 @@
 */
 namespace KeyAuth;
 
-session_start();
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+/*error_reporting(E_ALL);
+ini_set('display_errors', 1); You can use this code for better error handling - recommended for local testing only*/
 
 class api
 {
@@ -53,7 +58,90 @@ class api
         }
     }
 
-    function login($username, $password)
+    function logout(){
+        $data = array(
+            "type" => "logout",
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid
+        );
+
+        $response = $this->req($data);
+    }
+
+    function disable2fa($code) {
+        $data = array(
+            "type" => "2fadisable",
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid,
+            "code" => $code
+        );
+
+        $response = $this->req($data);
+        $json = json_decode($response);
+
+        if ($json->success){
+            echo "<script>alert('2FA has been successfully disabled!');</script>";
+        } else {
+            // Wait 3 seconds and then exit with error code 1
+            sleep(3);
+            exit(1);
+        }
+    }
+
+    function enable2fa($code = null) {
+        $data = array(
+            "type"      => "2faenable",
+            "sessionid" => $_SESSION['sessionid'],
+            "name"      => $this->name,
+            "ownerid"   => $this->ownerid,
+            "code"      => $code
+        );
+    
+        $response = $this->req($data);
+        $json = json_decode($response);
+    
+        if ($json === null) {
+            die("JSON decode error: " . json_last_error_msg());
+        }
+        
+        // Update session id if provided by the API
+        if (isset($json->sessionid)) {
+            $_SESSION['sessionid'] = $json->sessionid;
+        }
+    
+        if ($json->success) {
+            if (empty($code)) {
+                if (isset($json->{'2fa'}) && isset($json->{'2fa'}->secret_code)) {
+                    $secretCode = trim($json->{'2fa'}->secret_code);
+                    echo "<script>
+                        if (navigator.clipboard) {
+                            navigator.clipboard.writeText('" . addslashes($secretCode) . "')
+                                .then(function() {
+                                    alert('Your 2FA Secret Code has been copied to your clipboard! \\n\\n: " . addslashes($secretCode) . "');
+                                })
+                                .catch(function(err) {
+                                    alert('Your 2FA Secret Code: " . addslashes($secretCode) . "');
+                                });
+                        } else {
+                            alert('Your 2FA Secret Code: " . addslashes($secretCode) . "');
+                        }
+                    </script>";
+                } else {
+                    echo "<script>alert('2FA enabled successfully but no secret code was returned.');</script>";
+                }
+            } else {
+                echo "<script>alert('2FA has been successfully enabled!');</script>";
+            }
+        } else {
+            echo "<script>alert('Error: " . addslashes($json->message) . "');</script>";
+            sleep(3);
+            exit(1);
+        }
+    }
+
+    function login($username, $password, $code = null)
     {
         $data = array(
             "type" => "login",
@@ -63,6 +151,10 @@ class api
             "name" => $this->name,
             "ownerid" => $this->ownerid
         );
+
+        if (!is_null($code)) {
+            $data["code"] = $code;
+        }
 
         $response = $this->req($data);
 
@@ -102,7 +194,7 @@ class api
         return $json->success;
     }
 
-    function license($key)
+    function license($key, $code = null)
     {
         $data = array(
             "type" => "license",
@@ -111,6 +203,10 @@ class api
             "name" => $this->name,
             "ownerid" => $this->ownerid
         );
+
+        if (!is_null($code)) {
+            $data["code"] = $code;
+        }
 
         $response = $this->req($data);
 
