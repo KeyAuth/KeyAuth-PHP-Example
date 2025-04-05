@@ -113,6 +113,20 @@ if ($KeyAuthApp->license("licenseKeyHere")) {
 }
 ```
 
+## **Enable 2fa (Two Factor Authentication)**
+When you first call the function, it will generate the authentication code, you will put that into your authentication app and it will generate a 6 digit code. Use ProtonPass or Bitwarden if you don't have anything else. 
+
+After you get the 6 digit code, you will need to run the function again to enable 2fa. 
+
+```php
+$KeyAuthApp->enable2fa($_POST['2facode']);
+```
+
+## **Disable 2fa (Two Factor Authentication)**
+```php
+$KeyAuthApp->disable2fa($_POST['2facode']);
+```
+
 ## **User Data**
 
 Show information for current logged-in user.
