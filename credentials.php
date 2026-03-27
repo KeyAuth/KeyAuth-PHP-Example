@@ -1,4 +1,4 @@
 <?php
 
-$name = ""; // App name 
-$ownerid = ""; // Account ID 
+$name = "";
+$ownerid = "";

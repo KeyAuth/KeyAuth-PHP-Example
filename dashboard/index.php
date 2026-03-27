@@ -1,16 +1,4 @@
 <?php
-/*
-* KEYAUTH.CC PHP EXAMPLE
-*
-* Edit credentials.php file and enter name & ownerid from https://keyauth.cc/app
-*
-* READ HERE TO LEARN ABOUT KEYAUTH FUNCTIONS https://github.com/KeyAuth/KeyAuth-PHP-Example#keyauthapp-instance-definition
-*
-*/
-
-/*error_reporting(E_ALL);
-ini_set('display_errors', 1); You can use this code for better error handling - recommended for local testing only*/
-
 require '../keyauth.php';
 require '../credentials.php';
 
@@ -18,29 +6,17 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-if (!isset($_SESSION['user_data'])) // if user not logged in
-{
+if (!isset($_SESSION['user_data'])) {
     header("Location: ../");
     exit();
 }
 
 $KeyAuthApp = new KeyAuth\api($name, $ownerid);
 
-function findSubscription($name, $list)
-{
-    for ($i = 0; $i < count($list); $i++) {
-        if ($list[$i]->subscription == $name) {
-            return true;
-        }
-    }
-    return false;
-}
-
 $username = $_SESSION["user_data"]["username"];
 $subscriptions = $_SESSION["user_data"]["subscriptions"];
-$subscription = $_SESSION["user_data"]["subscriptions"][0]->subscription;
-$expiry = $_SESSION["user_data"]["subscriptions"][0]->expiry;
 $ip = $_SESSION["user_data"]["ip"];
+$hwid = $_SESSION["user_data"]["hwid"] ?? "Not assigned";
 $creationDate = $_SESSION["user_data"]["createdate"];
 $lastLogin = $_SESSION["user_data"]["lastlogin"];
 
@@ -60,81 +36,123 @@ if (isset($_POST['disable2fa'])) {
 }
 ?>
 <!DOCTYPE html>
-<html lang="en" class="bg-[#09090d] text-white overflow-x-hidden">
+<html lang="en" class="bg-custom-back-1 text-white overflow-x-hidden">
 
 <head>
-    <title>Dashboard</title>
+    <title>Dashboard - <?= $name; ?></title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="shortcut icon" href="https://cdn.keyauth.cc/global/imgs/Favicon.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <link rel="stylesheet" href="https://cdn.keyauth.cc/v4/css/oput.css">
     <script src="https://cdn.keyauth.cc/dashboard/unixtolocal.js"></script>
-
-    <link rel="stylesheet" href="https://cdn.keyauth.cc/v3/dist/output.css">
 </head>
 
-<body class="min-h-screen bg-[#09090d] text-white">
-  <div class="container mx-auto px-4">
-    <!-- Header -->
-    <header class="flex justify-end py-4">
-      <form method="post">
-        <button
-          name="logout"
-          class="inline-flex text-white bg-red-700 hover:opacity-60 focus:ring-0 font-medium rounded-lg text-sm px-5 py-2.5 transition duration-200">
-          Logout
-        </button>
-      </form>
-    </header>
+<body class="min-h-screen">
+    <div class="fixed inset-0 overflow-hidden pointer-events-none z-0">
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
+    </div>
 
-    <!-- Main section for user data -->
-    <main class="flex flex-col items-center justify-center py-8">
-      <div class="text-center mb-8">
-        <p class="text-md"><b>Logged in as:</b> <?= $username; ?></p>
-        <p class="text-md">
-            <b>IP:</b>
-            <span class="inline-block ml-1 filter blur-sm hover:blur-none transition duration-300">
-                <?= $ip; ?>
-            </span>
-        </p>
-        <p class="text-md"><b>Creation Date:</b> <?= date('Y-m-d H:i:s', $creationDate); ?></p>
-        <p class="text-md"><b>Last Login:</b> <?= date('Y-m-d H:i:s', $lastLogin); ?></p>
-        <p class="text-md">
-          <b>Does subscription with name:</b>
-          <code class="bg-blue-800 rounded-md font-mono px-1">default</code>
-          exist: <?= ((findSubscription("default", $_SESSION["user_data"]["subscriptions"]) ? 1 : 0) ? 'yes' : 'no'); ?>
-        </p>
-        <?php 
-          for ($i = 0; $i < count($subscriptions); $i++) {
-            echo "<p class='text-md'>#" . ($i+1) . " Subscription: " . $subscriptions[$i]->subscription . " - Subscription Expires: <script>document.write(convertTimestamp(" . $subscriptions[$i]->expiry . "));</script></p>";
-          }
-        ?>
-      </div>
-    </main>
+    <div class="container mx-auto px-4 py-8 relative z-10">
+        <!-- Navbar -->
+        <nav class="flex justify-between items-center bg-custom-back/80 backdrop-blur-md p-4 rounded-xl border border-white/10 mb-8 shadow-lg">
+            <h1 class="text-xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent"><?= $name; ?> Dashboard</h1>
+            <form method="post">
+                <button name="logout" class="bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white px-4 py-2 rounded-lg border border-red-600/30 transition-all font-semibold">Logout</button>
+            </form>
+        </nav>
 
-    <!-- 2FA Section-->
-    <section class="max-w-lg mx-auto pb-8">
-      <form method="post">
-        <div class="relative mb-4">
-          <input type="text" id="2facode" name="2facode"
-            class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-white bg-transparent rounded-lg border border-gray-300 appearance-none focus:ring-0 peer"
-            autocomplete="on">
-          <label for="2facode"
-            class="absolute text-sm text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-[#09090d] px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">
-            2FA Code
-          </label>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- User Info Card -->
+            <div class="bg-custom-back rounded-xl p-6 border border-white/10 shadow-xl">
+                <h2 class="text-xl font-semibold mb-6 border-b border-white/10 pb-2">User Information</h2>
+                <div class="space-y-4">
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Username:</span>
+                        <span class="font-medium text-white"><?= htmlspecialchars($username); ?></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">IP Address:</span>
+                        <span class="font-medium text-white blur-sm hover:blur-none transition-all cursor-pointer"><?= htmlspecialchars($ip); ?></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">HWID:</span>
+                        <span class="font-medium text-white transition-all"><?= htmlspecialchars($hwid); ?></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Created:</span>
+                        <span class="font-medium text-white"><?= date('Y-m-d H:i', $creationDate); ?></span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-400">Last Login:</span>
+                        <span class="font-medium text-white"><?= date('Y-m-d H:i', $lastLogin); ?></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subscriptions Card -->
+            <div class="bg-custom-back rounded-xl p-6 border border-white/10 shadow-xl">
+                <h2 class="text-xl font-semibold mb-6 border-b border-white/10 pb-2">Your Subscriptions</h2>
+                <div class="space-y-4 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
+                    <?php if (empty($subscriptions)): ?>
+                        <p class="text-gray-400 italic">No active subscriptions found.</p>
+                    <?php else: ?>
+                        <?php foreach ($subscriptions as $i => $sub): ?>
+                            <div class="bg-white/5 p-4 rounded-lg border border-white/5">
+                                <div class="flex justify-between items-center">
+                                    <span class="font-bold text-blue-400"><?= htmlspecialchars($sub->subscription); ?></span>
+                                    <span class="text-xs bg-blue-500/20 text-blue-300 px-2 py-1 rounded">Active</span>
+                                </div>
+                                <div class="text-sm text-gray-400 mt-2">
+                                    Expires: <script>
+                                        document.write(convertTimestamp(<?= $sub->expiry; ?>));
+                                    </script>
+                                </div>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </div>
+
+            <!-- 2FA Management Card -->
+            <div class="bg-custom-back rounded-xl p-6 border border-white/10 shadow-xl md:col-span-2 max-w-2xl mx-auto w-full">
+                <h2 class="text-xl font-semibold mb-6 border-b border-white/10 pb-2">Security (2FA)</h2>
+                <form method="post" class="space-y-6">
+                    <div class="relative">
+                        <input type="text" name="2facode" id="2facode" class="block px-2.5 pb-2.5 pt-4 w-full text-sm text-white bg-transparent rounded-lg border-1 border-gray-700 appearance-none focus:outline-none focus:ring-0 focus:border-blue-600 peer" placeholder=" " />
+                        <label for="2facode" class="absolute text-sm text-gray-500 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-custom-back-lbl px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 left-1">2FA Code</label>
+                    </div>
+                    <div class="flex gap-4">
+                        <button name="enable2fa" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-colors">Enable 2FA</button>
+                        <button name="disable2fa" class="flex-1 bg-red-600/20 text-red-400 hover:bg-red-600 hover:text-white border border-red-600/30 font-bold py-3 px-4 rounded-lg transition-colors">Disable 2FA</button>
+                    </div>
+                    <p class="text-xs text-gray-500 text-center italic">Leave blank when first enabling to receive your secret code.</p>
+                </form>
+            </div>
         </div>
+    </div>
 
-        <div class="flex justify-around">
-          <button
-            name="enable2fa"
-            class="inline-flex text-white bg-blue-700 hover:opacity-60 focus:ring-0 font-medium rounded-lg text-sm px-5 py-2.5 transition duration-200">
-            Enable 2FA
-          </button>
+    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
 
-          <button
-            name="disable2fa"
-            class="inline-flex text-white bg-red-700 hover:opacity-60 focus:ring-0 font-medium rounded-lg text-sm px-5 py-2.5 transition duration-200 ml-2">
-            Disable 2FA
-          </button>
-        </div>
-      </form>
-    </section>
-  </div>
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+    </style>
 </body>
+
 </html>

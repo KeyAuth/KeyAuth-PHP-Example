@@ -43,8 +43,8 @@ Please add a Cloudflare firewall rule to show challenge to users, then set chall
 
 KeyAuth is a powerful cloud-based authentication system designed to protect your software from piracy and unauthorized access. With KeyAuth, you can implement secure licensing, user management, and subscription systems in minutes. Client SDKs available for [C#](https://github.com/KeyAuth/KeyAuth-CSHARP-Example), [C++](https://github.com/KeyAuth/KeyAuth-CPP-Example), [Python](https://github.com/KeyAuth/KeyAuth-Python-Example), [Java](https://github.com/KeyAuth-Archive/KeyAuth-JAVA-api), [JavaScript](https://github.com/mazkdevf/KeyAuth-JS-Example), [VB.NET](https://github.com/KeyAuth/KeyAuth-VB-Example), [PHP](https://github.com/KeyAuth/KeyAuth-PHP-Example), [Rust](https://github.com/KeyAuth/KeyAuth-Rust-Example), [Go](https://github.com/mazkdevf/KeyAuth-Go-Example), [Lua](https://github.com/mazkdevf/KeyAuth-Lua-Examples), [Ruby](https://github.com/mazkdevf/KeyAuth-Ruby-Example), and [Perl](https://github.com/mazkdevf/KeyAuth-Perl-Example). KeyAuth has several unique features such as memory streaming, webhook function where you can send requests to API without leaking the API, discord webhook notifications, ban the user securely through the application at your discretion. Feel free to join https://t.me/keyauth if you have questions or suggestions.
 
-> [!TIP]
-> https://vaultcord.com FREE Discord bot to Backup server, members, channels, messages & more. Custom verify page, block alt accounts, VPNs & more.
+## **php.ini update needed**
+Our PHP example uses sodium. You may have to open php.ini and allow 'extension=sodium'
 
 ## **`KeyAuthApp` instance definition**
 
@@ -76,7 +76,14 @@ $customerPanelLink = $_SESSION["customerPanelLink"];
 ## **Login with username/password**
 
 ```php
-if ($KeyAuthApp->login("userNameHere", "passWordHere")) {
+if ($KeyAuthApp->login("userNameHere", "passwordHere")) {
+  // send user to dashboard or wherever you prefer
+}
+```
+
+## **Login with email/password**
+```php
+if ($KeyAuthApp->loginEmail("emailHere", "passwordHere")) {
   // send user to dashboard or wherever you prefer
 }
 ```
@@ -198,7 +205,7 @@ $KeyAuthApp->log("message");
 Tutorial video https://www.youtube.com/watch?v=ENRaNPPYJbc
 
 > [!NOTE]
-> Read documentation for KeyAuth webhooks here https://keyauth.readme.io/reference/webhooks-1
+> Read documentation for KeyAuth webhooks here https://docs.keyauth.cc/api/features/webhook
 
 Send HTTP requests to URLs securely without leaking the URL in your application. You should definitely use if you want to send requests to SellerAPI from your application, otherwise if you don't use you'll be leaking your seller key to everyone. And then someone can mess up your application.
 

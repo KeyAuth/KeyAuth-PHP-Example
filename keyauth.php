@@ -1,35 +1,25 @@
 <?php
-/*
-* KEYAUTH.CC PHP EXAMPLE
-*
-* Edit credentials.php file and enter name & ownerid from https://keyauth.cc/app
-*
-* READ HERE TO LEARN ABOUT KEYAUTH FUNCTIONS https://github.com/KeyAuth/KeyAuth-PHP-Example#keyauthapp-instance-definition
-*
-*/
+
 namespace KeyAuth;
 
 if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-/*error_reporting(E_ALL);
-ini_set('display_errors', 1); You can use this code for better error handling - recommended for local testing only*/
-
 class api
 {
     public $name;
     public $ownerid;
 
-    public function __construct(string $name, string $ownerid)
+    public function __construct($name, $ownerid)
     {
         $this->name = $name;
         $this->ownerid = $ownerid;
     }
 
-    function init()
+    public function init()
     {
-        if ($this->name == "" || strlen($this->ownerid) != 10) {
+        if (empty($this->name) || strlen($this->ownerid) != 10) {
             die("Go to <a href=\"https://keyauth.cc/app/\" target=\"blank\">https://keyauth.cc/app/</a> and click the <b>PHP</b> button in the App credentials code. Copy that & paste in <code style=\"background-color: #eee;border-radius: 3px;font-family: courier, monospace;padding: 0 3px;\">credentials.php</code>");
         }
 
@@ -47,101 +37,15 @@ class api
 
         $json = json_decode($response);
 
-        if ($json->message == "This program hash does not match, make sure you're using latest version") {
-            die("You must disable hash check at <a href=\"https://keyauth.cc/app/?page=app-settings\" target=\"blank\">https://keyauth.cc/app/?page=app-settings</a>");
-        }
-
-        if (!$json->success)
+        if (!$json->success) {
             die($json->message);
-        else if ($json->success) {
+        } else {
             $_SESSION['sessionid'] = $json->sessionid;
         }
     }
 
-    function logout(){
-        $data = array(
-            "type" => "logout",
-            "sessionid" => $_SESSION['sessionid'],
-            "name" => $this->name,
-            "ownerid" => $this->ownerid
-        );
-
-        $response = $this->req($data);
-    }
-
-    function disable2fa($code) {
-        $data = array(
-            "type" => "2fadisable",
-            "sessionid" => $_SESSION['sessionid'],
-            "name" => $this->name,
-            "ownerid" => $this->ownerid,
-            "code" => $code
-        );
-
-        $response = $this->req($data);
-        $json = json_decode($response);
-
-        if ($json->success){
-            echo "<script>alert('2FA has been successfully disabled!');</script>";
-        } else {
-            // Wait 3 seconds and then exit with error code 1
-            sleep(3);
-            exit(1);
-        }
-    }
-
-    function enable2fa($code = null) {
-        $data = array(
-            "type"      => "2faenable",
-            "sessionid" => $_SESSION['sessionid'],
-            "name"      => $this->name,
-            "ownerid"   => $this->ownerid,
-            "code"      => $code
-        );
-    
-        $response = $this->req($data);
-        $json = json_decode($response);
-    
-        if ($json === null) {
-            die("JSON decode error: " . json_last_error_msg());
-        }
-        
-        // Update session id if provided by the API
-        if (isset($json->sessionid)) {
-            $_SESSION['sessionid'] = $json->sessionid;
-        }
-    
-        if ($json->success) {
-            if (empty($code)) {
-                if (isset($json->{'2fa'}) && isset($json->{'2fa'}->secret_code)) {
-                    $secretCode = trim($json->{'2fa'}->secret_code);
-                    echo "<script>
-                        if (navigator.clipboard) {
-                            navigator.clipboard.writeText('" . addslashes($secretCode) . "')
-                                .then(function() {
-                                    alert('Your 2FA Secret Code has been copied to your clipboard! \\n\\n: " . addslashes($secretCode) . "');
-                                })
-                                .catch(function(err) {
-                                    alert('Your 2FA Secret Code: " . addslashes($secretCode) . "');
-                                });
-                        } else {
-                            alert('Your 2FA Secret Code: " . addslashes($secretCode) . "');
-                        }
-                    </script>";
-                } else {
-                    echo "<script>alert('2FA enabled successfully but no secret code was returned.');</script>";
-                }
-            } else {
-                echo "<script>alert('2FA has been successfully enabled!');</script>";
-            }
-        } else {
-            echo "<script>alert('Error: " . addslashes($json->message) . "');</script>";
-            sleep(3);
-            exit(1);
-        }
-    }
-
-    function login($username, $password, $code = null)
+    // Authentication Functions
+    public function login($username, $password, $code = null)
     {
         $data = array(
             "type" => "login",
@@ -152,24 +56,48 @@ class api
             "ownerid" => $this->ownerid
         );
 
-        if (!is_null($code)) {
-            $data["code"] = $code;
-        }
+        if (!is_null($code)) $data["code"] = $code;
 
         $response = $this->req($data);
-
         $json = json_decode($response);
 
         if (!$json->success) {
             unset($_SESSION['sessionid']);
             $this->error($json->message);
-        } else if ($json->success)
+        } else {
             $_SESSION["user_data"] = (array)$json->info;
+        }
 
         return $json->success;
     }
 
-    function register($username, $password, $key)
+    public function loginEmail($email, $password, $code = null)
+    {
+        $data = array(
+            "type" => "loginEmail",
+            "email" => $email,
+            "pass" => $password,
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid
+        );
+
+        if (!is_null($code)) $data["code"] = $code;
+
+        $response = $this->req($data);
+        $json = json_decode($response);
+
+        if (!$json->success) {
+            unset($_SESSION['sessionid']);
+            $this->error($json->message);
+        } else {
+            $_SESSION["user_data"] = (array)$json->info;
+        }
+
+        return $json->success;
+    }
+
+    public function register($username, $password, $key)
     {
         $data = array(
             "type" => "register",
@@ -182,19 +110,19 @@ class api
         );
 
         $response = $this->req($data);
-
         $json = json_decode($response);
 
         if (!$json->success) {
             unset($_SESSION['sessionid']);
             $this->error($json->message);
-        } else if ($json->success)
+        } else {
             $_SESSION["user_data"] = (array)$json->info;
+        }
 
         return $json->success;
     }
 
-    function license($key, $code = null)
+    public function license($key, $code = null)
     {
         $data = array(
             "type" => "license",
@@ -204,24 +132,22 @@ class api
             "ownerid" => $this->ownerid
         );
 
-        if (!is_null($code)) {
-            $data["code"] = $code;
-        }
+        if (!is_null($code)) $data["code"] = $code;
 
         $response = $this->req($data);
-
         $json = json_decode($response);
 
         if (!$json->success) {
             unset($_SESSION['sessionid']);
             $this->error($json->message);
-        } else if ($json->success)
+        } else {
             $_SESSION["user_data"] = (array)$json->info;
+        }
 
         return $json->success;
     }
 
-    function upgrade($username, $key)
+    public function upgrade($username, $key)
     {
         $data = array(
             "type" => "upgrade",
@@ -233,7 +159,6 @@ class api
         );
 
         $response = $this->req($data);
-
         $json = json_decode($response);
 
         if (!$json->success) {
@@ -241,12 +166,120 @@ class api
             $this->error($json->message);
         }
 
-        // don't allow them to dashboard yet, upgrade doesn't require password so they need to login after register
+        return $json->success;
+    }
+
+    public function forgot($username, $email)
+    {
+        $data = array(
+            "type" => "forgot", 
+            "username" => $username,
+            "email" => $email, 
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid
+        );
+
+        $response = $this->req($data);
+        $json = json_decode($response);
+
+        if (!$json->success) {
+            $this->error($json->message);
+        }
 
         return $json->success;
     }
 
-    function var($varid)
+    // Account Actions
+    public function logout()
+    {
+        $data = array(
+            "type" => "logout",
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid
+        );
+
+        $this->req($data);
+    }
+
+    public function enable2fa($code = null)
+    {
+        $data = array(
+            "type" => "2faenable",
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid,
+            "code" => $code
+        );
+
+        $response = $this->req($data);
+        $json = json_decode($response);
+
+        if (isset($json->sessionid)) $_SESSION['sessionid'] = $json->sessionid;
+
+        if ($json->success) {
+            if (empty($code)) {
+                if (isset($json->{'2fa'}->secret_code)) {
+                    $secretCode = trim($json->{'2fa'}->secret_code);
+                    echo "<script>
+                        if (navigator.clipboard) {
+                            navigator.clipboard.writeText('" . addslashes($secretCode) . "')
+                                .then(() => alert('Your 2FA Secret Code copied to clipboard: " . addslashes($secretCode) . "'))
+                                .catch(() => alert('Your 2FA Secret Code: " . addslashes($secretCode) . "'));
+                        } else {
+                            alert('Your 2FA Secret Code: " . addslashes($secretCode) . "');
+                        }
+                    </script>";
+                }
+            } else {
+                echo "<script>alert('2FA successfully enabled!');</script>";
+            }
+        } else {
+            $this->error($json->message);
+        }
+    }
+
+    public function disable2fa($code)
+    {
+        $data = array(
+            "type" => "2fadisable",
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid,
+            "code" => $code
+        );
+
+        $response = $this->req($data);
+        $json = json_decode($response);
+
+        if ($json->success) {
+            echo "<script>alert('2FA successfully disabled!');</script>";
+        } else {
+            $this->error($json->message);
+        }
+    }
+
+    public function ban($reason)
+    {
+        $data = array(
+            "type" => "ban",
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid,
+            "reason" => $reason
+        );
+
+        $response = $this->req($data);
+        $json = json_decode($response);
+
+        if (!$json->success) $this->error($json->message);
+
+        return $json->success;
+    }
+
+    // Variable Functions
+    public function var($varid)
     {
         $data = array(
             "type" => "var",
@@ -257,33 +290,17 @@ class api
         );
 
         $response = $this->req($data);
-
         $json = json_decode($response);
 
         if (!$json->success) {
             unset($_SESSION['sessionid']);
             $this->error($json->message);
-        } else if ($json->success)
+        } else {
             return $json->message;
+        }
     }
 
-    function log($message)
-    {
-        $User = gethostname();
-
-        $data = array(
-            "type" => "log",
-            "pcuser" => $User,
-            "message" => $message,
-            "sessionid" => $_SESSION['sessionid'],
-            "name" => $this->name,
-            "ownerid" => $this->ownerid
-        );
-
-        $this->req($data);
-    }
-
-    function setvar($varname, $data)
+    public function setvar($varname, $data)
     {
         $data = array(
             "type" => "setvar",
@@ -297,7 +314,7 @@ class api
         $this->req($data);
     }
 
-    function getvar($varid)
+    public function getvar($varid)
     {
         $data = array(
             "type" => "getvar",
@@ -308,16 +325,27 @@ class api
         );
 
         $response = $this->req($data);
-
         $json = json_decode($response);
 
-        if (!$json->success) {
-            return null;
-        } else if ($json->success)
-            return $json->response;
+        return $json->success ? $json->response : null;
     }
 
-    function webhook($webid, $param, $body = "", $conttype = "")
+    // Misc Functions
+    public function log($message)
+    {
+        $data = array(
+            "type" => "log",
+            "pcuser" => gethostname(),
+            "message" => $message,
+            "sessionid" => $_SESSION['sessionid'],
+            "name" => $this->name,
+            "ownerid" => $this->ownerid
+        );
+
+        $this->req($data);
+    }
+
+    public function webhook($webid, $param, $body = "", $conttype = "")
     {
         $data = array(
             "type" => "webhook",
@@ -331,16 +359,13 @@ class api
         );
 
         $response = $this->req($data);
-
         $json = json_decode($response);
 
-        if (!$json->success) {
-            return null;
-        } else if ($json->success)
-            return $json->response;
+        return $json->success ? $json->response : null;
     }
 
-    function FetchOnline() {
+    public function fetchOnline()
+    {
         $data = array(
             "type" => "fetchOnline",
             "sessionid" => $_SESSION['sessionid'],
@@ -349,16 +374,13 @@ class api
         );
 
         $response = $this->req($data);
-
         $json = json_decode($response);
 
-        if (!$json->success) {
-            return null;
-        } else if ($json->success)
-            return $json->response;
+        return $json->success ? $json->response : null;
     }
 
-    function checkBlack() {
+    public function checkBlack()
+    {
         $data = array(
             "type" => "checkBlack",
             "sessionid" => $_SESSION['sessionid'],
@@ -367,36 +389,13 @@ class api
         );
 
         $response = $this->req($data);
-
         $json = json_decode($response);
 
-        if (!$json->success) {
-            return null;
-        } else if ($json->success)
-            return $json->response;
-    }
-    
-       function Ban($reason){
-        $data = array(
-            "type" => "ban",
-            "sessionid" => $_SESSION['sessionid'],
-            "name" => $this->name,
-            "ownerid" => $this->ownerid,
-            "reason" => $reason
-        );
-
-        $response = $this->req($data);
-        $json = json_decode($response);
-
-        if ($json->success) {
-            return true;
-        } else {
-            $this->error($json->message);
-            return false;
-        }
+        return $json->success ? $json->response : null;
     }
 
-    function ChatGet($channel) {
+    public function chatGet($channel)
+    {
         $data = array(
             "type" => "chatget",
             "channel" => $channel,
@@ -406,16 +405,13 @@ class api
         );
 
         $response = $this->req($data);
-
         $json = json_decode($response);
 
-        if (!$json->success) {
-            return null;
-        } else if ($json->success)
-            return $json->messages;
+        return $json->success ? $json->messages : null;
     }
 
-    function ChatSend($message, $channel) {
+    public function chatSend($message, $channel)
+    {
         $data = array(
             "type" => "chatsend",
             "message" => $message,
@@ -426,21 +422,19 @@ class api
         );
 
         $response = $this->req($data);
-
         $json = json_decode($response);
 
-        if (!$json->success) {
-            return null;
-        } else if ($json->success)
-            return $json->message;
-
+        return $json->success ? $json->message : null;
     }
 
+    // Core Helpers
     private function req($data)
     {
-        $curl = curl_init("https://keyauth.win/api/1.2/");
+        $curl = curl_init("https://keyauth.win/api/1.3/");
         curl_setopt($curl, CURLOPT_USERAGENT, "KeyAuth");
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_HEADER, true);
+        curl_setopt($curl, CURLOPT_TIMEOUT, 20);
 
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
@@ -450,43 +444,105 @@ class api
 
         $response = curl_exec($curl);
 
-        curl_close($curl);
+        $http_code = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+        if ($http_code == 429) {
+            die("You're connecting too faster to loader, slow down");
+        }
 
-        return $response;
+        $header_size = curl_getinfo($curl, CURLINFO_HEADER_SIZE);
+        $header_str = substr($response, 0, $header_size);
+        $body = substr($response, $header_size);
+
+        $headers = array();
+        foreach (explode("\r\n", $header_str) as $line) {
+            $parts = explode(': ', $line, 2);
+            if (isset($parts[1])) {
+                $headers[strtolower(trim($parts[0]))] = trim($parts[1]);
+            }
+        }
+
+        $this->sigCheck($body, $headers, $data['type']);
+
+        $json = json_decode($body);
+        if ($json && isset($json->ownerid) && $json->ownerid != $this->ownerid) {
+            die("Application mismatch. Terminating process.");
+        }
+
+        return $body;
+    }
+
+    private function sigCheck(string $resp, array $headers, string $type): void
+    {
+        $skipTypes = ['log', 'file', '2faenable', '2fadisable'];
+
+        if (in_array($type, $skipTypes, true)) {
+            return;
+        }
+
+        $signatureHeader = $headers['x-signature-ed25519'] ?? null;
+        $timestampHeader = $headers['x-signature-timestamp'] ?? null;
+
+        if (!is_string($signatureHeader) || !is_string($timestampHeader)) {
+            $this->failSignatureCheck();
+        }
+
+        if (!extension_loaded('sodium')) {
+            die("The 'sodium' extension is required.");
+        }
+
+        if (!ctype_digit($timestampHeader)) {
+            $this->failSignatureCheck();
+        }
+
+        $timestamp = (int) $timestampHeader;
+
+        // More realistic replay window
+        if (abs(time() - $timestamp) > 300) {
+            throw new \RuntimeException("Clock skew too large or request expired.");
+        }
+
+        $publicKeyHex = '5586b4bc69c7a4b487e4563a4cd96afd39140f919bd31cea7d1c6a1e8439422b';
+        $signedMessage = $timestampHeader . $resp;
+
+        try {
+            $signature = sodium_hex2bin($signatureHeader);
+            $publicKey = sodium_hex2bin($publicKeyHex);
+
+            if (!sodium_crypto_sign_verify_detached($signature, $signedMessage, $publicKey)) {
+                $this->failSignatureCheck();
+            }
+        } catch (\Throwable $e) {
+            $this->failSignatureCheck();
+        }
+    }
+
+    private function failSignatureCheck(): void
+    {
+        http_response_code(401);
+        exit('Signature verification failed.');
     }
 
     public function error($msg)
     {
-        echo '
-                <script type=\'text/javascript\'>
-                
-                const notyf = new Notyf();
-                notyf
-                  .error({
-                    message: \'' . addslashes($msg) . '\',
-                    duration: 3500,
-                    dismissible: true
-                  });                
-                
-                </script>
-                ';
+        echo "<script>
+            const notyf = new Notyf();
+            notyf.error({
+                message: '" . addslashes($msg) . "',
+                duration: 3500,
+                dismissible: true
+            });
+        </script>";
     }
 
     public function success($msg)
     {
-        echo '
-                <script type=\'text/javascript\'>
-                
-                const notyf = new Notyf();
-                notyf
-                  .success({
-                    message: \'' . addslashes($msg) . '\',
-                    duration: 3500,
-                    dismissible: true
-                  });                
-                
-                </script>
-                ';
+        echo "<script>
+            const notyf = new Notyf();
+            notyf.success({
+                message: '" . addslashes($msg) . "',
+                duration: 3500,
+                dismissible: true
+            });
+        </script>";
     }
 }
-?>
